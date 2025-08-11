@@ -11,14 +11,15 @@
     --bg-color: #f0f2f5;
     --card-bg: white;
     --text-color: #222;
-    --shadow-light: 0 0 5px rgba(0,0,0,0.1);
-    --shadow-medium: 0 4px 15px rgba(0,0,0,0.2);
+    --shadow-light: 0 0 5px rgba(0, 0, 0, 0.1);
+    --shadow-medium: 0 4px 15px rgba(0, 0, 0, 0.2);
     --success-color: #28a745;
     --danger-color: #dc3545;
   }
   body {
     font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-    margin: 0; padding: 0;
+    margin: 0;
+    padding: 0;
     background: var(--bg-color);
     color: var(--text-color);
     direction: rtl;
@@ -31,18 +32,23 @@
     text-align: center;
     font-weight: bold;
     font-size: 1.6rem;
+    z-index: 100;
     display: flex;
     justify-content: space-between;
     align-items: center;
   }
-  header #user-info {
-      font-size: 1rem;
+  header h1 {
+    margin: 0;
+    flex-grow: 1;
+    text-align: center;
   }
-  header #btn-sign-out {
-      background: none;
-      border: 1px solid white;
-      color: white;
-      padding: 5px 10px;
+  #logout-btn {
+    background: none;
+    border: 1px solid white;
+    color: white;
+    padding: 5px 10px;
+    font-size: 1rem;
+    cursor: pointer;
   }
   main {
     padding: 20px;
@@ -77,7 +83,9 @@
   button:active {
     transform: translateY(0);
   }
-  input, select, textarea {
+  input,
+  select,
+  textarea {
     width: 100%;
     padding: 10px;
     margin: 8px 0 16px 0;
@@ -87,7 +95,9 @@
     box-sizing: border-box;
     transition: border-color 0.3s;
   }
-  input:focus, select:focus, textarea:focus {
+  input:focus,
+  select:focus,
+  textarea:focus {
     border-color: var(--primary-color);
     outline: none;
   }
@@ -118,7 +128,7 @@
   .client-item {
     cursor: pointer;
   }
-  .transaction-item, .user-item {
+  .transaction-item {
     display: grid;
     grid-template-columns: 2fr 1fr 1fr 50px;
     gap: 10px;
@@ -142,11 +152,13 @@
   .transaction-type-payment {
     color: var(--success-color);
   }
-  .transaction-actions, .client-actions, .user-actions {
+  .transaction-actions,
+  .client-actions {
     display: flex;
     gap: 5px;
   }
-  .transaction-actions button, .client-actions button, .user-actions button {
+  .transaction-actions button,
+  .client-actions button {
     background: none;
     border: none;
     color: #888;
@@ -155,7 +167,8 @@
     cursor: pointer;
     transition: color 0.3s;
   }
-  .transaction-actions button:hover, .client-actions button:hover, .user-actions button:hover {
+  .transaction-actions button:hover,
+  .client-actions button:hover {
     color: var(--primary-color);
   }
   .hidden {
@@ -181,8 +194,11 @@
   }
   .modal-overlay {
     position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(0,0,0,0.6);
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -281,7 +297,6 @@
     gap: 10px;
     margin-top: 20px;
   }
-  /* قائمة العملاء - أزرار ثابتة وشريط بحث */
   .clients-header,
   .client-details-header {
     background: var(--card-bg);
@@ -289,7 +304,7 @@
     position: sticky;
     top: 0;
     z-index: 99;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
     margin-bottom: 20px;
   }
@@ -317,8 +332,10 @@
     margin-top: 0;
     margin-bottom: 0;
   }
-  #btn-back-to-home-from-clients, #btn-add-client,
-  #btn-back-to-clients-from-details, #btn-edit-client-name {
+  #btn-back-to-home-from-clients,
+  #btn-add-client,
+  #btn-back-to-clients-from-details,
+  #btn-edit-client-name {
     display: flex;
     align-items: center;
     gap: 5px;
@@ -334,23 +351,20 @@
     flex-direction: column;
     gap: 10px;
   }
-  /* إخفاء الهيدر في الصفحات الأخرى */
   #clients-screen header,
   #client-details-screen header,
   #add-client-screen header,
   #edit-client-name-screen header,
   #about-screen header {
-      display: none;
+    display: none;
   }
-  
-  /* تفاصيل العميل - التعديلات الجديدة */
   .client-details-header {
     background: var(--card-bg);
     padding: 10px;
     position: sticky;
     top: 0;
     z-index: 99;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
     margin-bottom: 20px;
     display: flex;
@@ -379,15 +393,13 @@
   .client-details-controls button:hover {
     background-color: var(--bg-color);
   }
-  
-  /* التعديل الجديد هنا */
   .date-filter-row {
     background: var(--card-bg);
-    padding: 8px 10px; /* تقليل حجم الشريط */
+    padding: 8px 10px;
     position: sticky;
     top: 60px;
     z-index: 98;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
     margin-bottom: 20px;
     display: flex;
@@ -397,7 +409,7 @@
   .date-filter-row .filter-dates {
     flex-grow: 1;
     display: flex;
-    gap: 5px; /* تقليل المسافة بين الحقول */
+    gap: 5px;
     padding: 0;
     margin: 0;
     background: none;
@@ -405,11 +417,11 @@
   }
   .date-filter-row .filter-dates > div {
     flex: 1;
-    min-width: unset; /* لإلغاء الحد الأدنى للعرض */
+    min-width: unset;
   }
   .date-filter-row .filter-dates input {
-    padding: 8px; /* تقليل حجم حقول الإدخال */
-    font-size: 0.9rem; /* تصغير الخط */
+    padding: 8px;
+    font-size: 0.9rem;
     margin: 0;
   }
   .date-filter-row .filter-dates label {
@@ -420,8 +432,8 @@
   .date-filter-row #btn-add-transaction {
     background-color: var(--success-color);
     color: white;
-    font-size: 1.2rem; /* تصغير أيقونة الزر */
-    width: 36px; /* تصغير حجم الزر */
+    font-size: 1.2rem;
+    width: 36px;
     height: 36px;
     border-radius: 50%;
     padding: 0;
@@ -430,14 +442,13 @@
     align-items: center;
     box-shadow: var(--shadow-medium);
   }
-  
   .client-details-footer {
     background: var(--card-bg);
     padding: 10px;
     position: sticky;
     bottom: 0;
     z-index: 99;
-    box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -464,77 +475,131 @@
     align-items: center;
     box-shadow: var(--shadow-medium);
   }
+  .approval-status-pending,
+  .approval-status-approved {
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-weight: bold;
+  }
+  .approval-status-pending {
+    background-color: #ffc107;
+    color: #343a40;
+  }
+  .approval-status-approved {
+    background-color: #28a745;
+    color: #fff;
+  }
+  #admin-controls {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  #users-list-container li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+  }
+  #login-screen,
+  #register-screen {
+    text-align: center;
+  }
+  #login-form,
+  #register-form {
+    max-width: 400px;
+    margin: 20px auto;
+    padding: 20px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: var(--shadow-medium);
+  }
+  #login-form h2, #register-form h2 {
+    margin-top: 0;
+  }
+  #login-form input, #register-form input {
+    margin-bottom: 10px;
+  }
+  #switch-to-register, #switch-to-login {
+    background: none;
+    color: var(--primary-color);
+    text-decoration: underline;
+    margin-top: 10px;
+  }
   @media (max-width: 600px) {
     .filter-dates {
-      flex-direction: row; /* الحفاظ على السطر الواحد في الشاشات الصغيرة */
+      flex-direction: row;
     }
-    .transaction-item, .user-item {
+    .transaction-item {
       grid-template-columns: 1fr 1fr;
       gap: 5px;
     }
-    .transaction-date, .transaction-amount {
+    .transaction-date,
+    .transaction-amount {
       font-size: 0.9rem;
     }
     .modal-buttons {
-        flex-direction: column;
+      flex-direction: column;
     }
     .clients-controls {
       flex-direction: row;
     }
-    .clients-controls h2, .client-details-controls h2 {
+    .clients-controls h2,
+    .client-details-controls h2 {
       font-size: 1.3rem;
     }
-    .clients-controls button, .client-details-controls button {
+    .clients-controls button,
+    .client-details-controls button {
       font-size: 0.9rem;
       padding: 6px 10px;
     }
     .date-filter-row .filter-dates {
-      flex-wrap: wrap; /* السماح بالتفاف الحقول إذا كانت الشاشة صغيرة جداً */
+      flex-wrap: wrap;
     }
   }
 </style>
 </head>
 <body>
+<header id="app-header" class="hidden">
+  <div style="width: 50px;"></div>
+  <h1>نظام الفوترة وإدارة الديون</h1>
+  <button id="logout-btn">خروج</button>
+</header>
 <main>
-    <section id="auth-screen" class="screen active">
-        <header>نظام الفوترة وإدارة الديون</header>
-        <h2>تسجيل الدخول / إنشاء حساب</h2>
-        <form id="auth-form">
-            <div class="form-group">
-                <label for="auth-email" class="required">البريد الإلكتروني</label>
-                <input type="email" id="auth-email" required />
-            </div>
-            <div class="form-group">
-                <label for="auth-password" class="required">كلمة المرور</label>
-                <input type="password" id="auth-password" required />
-            </div>
-            <div class="btn-group">
-                <button type="submit" id="btn-sign-in">تسجيل الدخول</button>
-                <button type="button" id="btn-sign-up">إنشاء حساب جديد</button>
-            </div>
-        </form>
-    </section>
+  <section id="login-screen" class="screen">
+    <div id="login-form">
+      <h2>تسجيل الدخول</h2>
+      <form id="auth-form">
+        <input type="email" id="email-input" placeholder="البريد الإلكتروني" required />
+        <input type="password" id="password-input" placeholder="كلمة المرور" required />
+        <button type="submit" class="submit-btn">تسجيل الدخول</button>
+        <button type="button" id="switch-to-register">ليس لديك حساب؟ قم بالتسجيل</button>
+      </form>
+    </div>
+  </section>
 
-    <section id="admin-dashboard" class="screen">
-        <header>
-            <h1>لوحة تحكم المسؤول</h1>
-            <div id="user-info">
-                <span id="current-user-email"></span>
-                <button id="btn-sign-out">خروج</button>
-            </div>
-        </header>
-        <h2>المستخدمون الجدد في انتظار الموافقة</h2>
-        <ul id="pending-users-list"></ul>
-    </section>
-  
-  <section id="home-screen" class="screen">
-    <header>
-        <h1>نظام الفوترة وإدارة الديون</h1>
-        <div id="user-info">
-            <span id="current-user-email"></span>
-            <button id="btn-sign-out">خروج</button>
-        </div>
-    </header>
+  <section id="register-screen" class="screen">
+    <div id="register-form">
+      <h2>إنشاء حساب جديد</h2>
+      <form id="register-auth-form">
+        <input type="email" id="register-email-input" placeholder="البريد الإلكتروني" required />
+        <input type="password" id="register-password-input" placeholder="كلمة المرور" required />
+        <button type="submit" class="submit-btn">إنشاء الحساب</button>
+        <button type="button" id="switch-to-login">لدي حساب بالفعل</button>
+      </form>
+    </div>
+  </section>
+
+  <section id="admin-screen" class="screen">
+    <h2>لوحة تحكم المسؤول</h2>
+    <div id="admin-controls">
+      <button id="btn-show-pending-users">عرض المستخدمين قيد المراجعة</button>
+      <button id="btn-show-all-users">عرض جميع المستخدمين</button>
+    </div>
+    <ul id="users-list-container"></ul>
+  </section>
+
+  <section id="user-screen" class="screen">
     <h2>إضافة معاملة جديدة</h2>
     <form id="add-transaction-form">
       <div class="form-group">
@@ -569,13 +634,6 @@
   </section>
 
   <section id="clients-screen" class="screen">
-    <header>
-        <h1>قائمة العملاء</h1>
-        <div id="user-info">
-            <span id="current-user-email"></span>
-            <button id="btn-sign-out">خروج</button>
-        </div>
-    </header>
     <div class="clients-header">
       <div class="clients-controls">
         <button id="btn-back-to-home-from-clients" class="secondary-btn">
@@ -590,15 +648,7 @@
     </div>
     <ul id="clients-list-container"></ul>
   </section>
-
   <section id="client-details-screen" class="screen">
-    <header>
-        <h1 id="client-details-header-title">تفاصيل العميل</h1>
-        <div id="user-info">
-            <span id="current-user-email"></span>
-            <button id="btn-sign-out">خروج</button>
-        </div>
-    </header>
     <div class="client-details-header">
       <div class="client-details-controls">
         <button id="btn-back-to-clients-from-details">
@@ -623,9 +673,7 @@
       </div>
       <button id="btn-add-transaction">+</button>
     </div>
-    
     <ul id="transactions-list"></ul>
-
     <div class="client-details-footer">
       <div class="total-debt-display" id="total-debt-display"></div>
       <button id="btn-export-csv">
@@ -634,57 +682,53 @@
     </div>
   </section>
 </main>
-
 <div class="modal-overlay" id="add-client-modal">
-    <div class="modal-box">
-        <h3>إضافة عميل جديد</h3>
-        <form id="add-client-form">
-            <div class="form-group">
-                <label for="new-client-name" class="required">اسم العميل</label>
-                <input type="text" id="new-client-name" autocomplete="off" required />
-            </div>
-            <div class="form-group">
-                <label for="new-client-initial-debt">دين مبدئي (اختياري)</label>
-                <input type="number" id="new-client-initial-debt" step="0.01" min="0" placeholder="مثلاً: 500.00" />
-            </div>
-            <div class="form-group">
-                <label for="new-client-initial-desc">وصف الدين المبدئي</label>
-                <input type="text" id="new-client-initial-desc" placeholder="مثلاً: دين قرض من 1 يناير" />
-            </div>
-            <div class="modal-buttons">
-                <button type="submit">إضافة العميل</button>
-                <button type="button" class="cancel-btn" id="btn-cancel-add-client">إلغاء</button>
-            </div>
-        </form>
-    </div>
+  <div class="modal-box">
+    <h3>إضافة عميل جديد</h3>
+    <form id="add-client-form">
+      <div class="form-group">
+        <label for="new-client-name" class="required">اسم العميل</label>
+        <input type="text" id="new-client-name" autocomplete="off" required />
+      </div>
+      <div class="form-group">
+        <label for="new-client-initial-debt">دين مبدئي (اختياري)</label>
+        <input type="number" id="new-client-initial-debt" step="0.01" min="0" placeholder="مثلاً: 500.00" />
+      </div>
+      <div class="form-group">
+        <label for="new-client-initial-desc">وصف الدين المبدئي</label>
+        <input type="text" id="new-client-initial-desc" placeholder="مثلاً: دين قرض من 1 يناير" />
+      </div>
+      <div class="modal-buttons">
+        <button type="submit">إضافة العميل</button>
+        <button type="button" class="cancel-btn" id="btn-cancel-add-client">إلغاء</button>
+      </div>
+    </form>
+  </div>
 </div>
-
 <div class="modal-overlay" id="edit-client-name-modal">
-    <div class="modal-box">
-        <h3>تعديل اسم العميل</h3>
-        <form id="edit-client-name-form">
-            <div class="form-group">
-                <label for="edit-client-name-input" class="required">الاسم الجديد</label>
-                <input type="text" id="edit-client-name-input" autocomplete="off" required />
-            </div>
-            <div class="modal-buttons">
-                <button type="submit">حفظ التعديل</button>
-                <button type="button" class="cancel-btn" id="btn-cancel-edit-client">إلغاء</button>
-            </div>
-        </form>
-    </div>
+  <div class="modal-box">
+    <h3>تعديل اسم العميل</h3>
+    <form id="edit-client-name-form">
+      <div class="form-group">
+        <label for="edit-client-name-input" class="required">الاسم الجديد</label>
+        <input type="text" id="edit-client-name-input" autocomplete="off" required />
+      </div>
+      <div class="modal-buttons">
+        <button type="submit">حفظ التعديل</button>
+        <button type="button" class="cancel-btn" id="btn-cancel-edit-client">إلغاء</button>
+      </div>
+    </form>
+  </div>
 </div>
-
 <div class="modal-overlay" id="about-modal">
-    <div class="modal-box">
-        <h3>عن التطبيق</h3>
-        <p>هذا التطبيق هو نظام بسيط لإدارة الفواتير والديون، مصمم لتبسيط عملية تتبع المعاملات المالية.</p>
-        <div class="modal-buttons">
-            <button class="confirm-btn" id="btn-close-about">إغلاق</button>
-        </div>
+  <div class="modal-box">
+    <h3>عن التطبيق</h3>
+    <p>هذا التطبيق هو نظام بسيط لإدارة الفواتير والديون، مصمم لتبسيط عملية تتبع المعاملات المالية.</p>
+    <div class="modal-buttons">
+      <button class="confirm-btn" id="btn-close-about">إغلاق</button>
     </div>
+  </div>
 </div>
-
 <div class="modal-overlay" id="confirm-modal">
   <div class="modal-box">
     <div class="modal-message"></div>
@@ -694,7 +738,6 @@
     </div>
   </div>
 </div>
-
 <div class="modal-overlay" id="edit-transaction-modal">
   <div class="modal-box">
     <h3 style="margin-top: 0;">تعديل المعاملة</h3>
@@ -725,7 +768,6 @@
     </form>
   </div>
 </div>
-
 <div class="modal-overlay" id="add-transaction-client-modal">
   <div class="modal-box">
     <h3>إضافة معاملة جديدة</h3>
@@ -756,7 +798,6 @@
     </form>
   </div>
 </div>
-
 <div class="modal-overlay" id="message-modal">
   <div class="modal-box">
     <div class="modal-message"></div>
@@ -765,7 +806,6 @@
     </div>
   </div>
 </div>
-
 <footer>
   <button id="btn-to-about">?</button>
   <p>تم تطويره بواسطة - عبدالله الزمزمي</p>
@@ -775,28 +815,28 @@
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 <script>
-(() => {
-  // Your web app's Firebase configuration
+  // Your Firebase configuration
   const firebaseConfig = {
-    apiKey: "AIzaSyAGdh40AO3JvX1WQ3IfMFgSoDzTixmnCCA",
+    apiKey: "AIzaSyC...", // ضع هنا مفتاح API الخاص بك
     authDomain: "azapp-61227.firebaseapp.com",
     projectId: "azapp-61227",
-    storageBucket: "azapp-61227.firebasestorage.app",
-    messagingSenderId: "1023006420463",
-    appId: "1:1023006420463:web:0e3b09aed5473efd381a1a"
+    storageBucket: "azapp-61227.appspot.com",
+    messagingSenderId: "...",
+    appId: "..."
   };
 
-  // Initialize Firebase
   firebase.initializeApp(firebaseConfig);
   const auth = firebase.auth();
   const db = firebase.firestore();
-
+  
+  // All your JavaScript logic goes here...
   const screens = {
-    auth: document.getElementById("auth-screen"),
-    home: document.getElementById("home-screen"),
+    login: document.getElementById("login-screen"),
+    register: document.getElementById("register-screen"),
+    user: document.getElementById("user-screen"),
     clients: document.getElementById("clients-screen"),
     clientDetails: document.getElementById("client-details-screen"),
-    adminDashboard: document.getElementById("admin-dashboard")
+    admin: document.getElementById("admin-screen")
   };
   const modals = {
     confirm: document.getElementById("confirm-modal"),
@@ -807,195 +847,186 @@
     addTransactionClient: document.getElementById("add-transaction-client-modal"),
     about: document.getElementById("about-modal")
   };
-  
-  let clients = [];
   let currentClientId = null;
   let currentUser = null;
-  let isAdmin = false;
-  let pendingUsers = [];
-
+  let clientsData = [];
+  let userRole = null;
+  
   function showScreen(screenName) {
-    document.querySelectorAll('section.screen').forEach(screen => screen.classList.remove("active"));
-    document.getElementById(screenName + "-screen").classList.add("active");
+    document.querySelector('main').classList.remove('home-active', 'clients-active', 'client-details-active');
+    Object.values(screens).forEach(screen => screen.classList.remove("active"));
+    screens[screenName].classList.add("active");
   }
-
   function showModal(modalName) {
       modals[modalName].classList.add("active");
   }
   function hideModal(modalName) {
       modals[modalName].classList.remove("active");
   }
+  function updateHeader(loggedIn) {
+    const header = document.getElementById("app-header");
+    if (loggedIn) {
+        header.classList.remove("hidden");
+    } else {
+        header.classList.add("hidden");
+    }
+  }
 
-  // --- Authentication and User Management Logic ---
+  // Auth Logic
   auth.onAuthStateChanged(async (user) => {
-      if (user) {
-          currentUser = user;
-          const userDoc = await db.collection("users").doc(user.uid).get();
-          if (userDoc.exists) {
-              const userData = userDoc.data();
-              isAdmin = userData.role === "admin";
-              if (isAdmin) {
-                  showScreen("admin-dashboard");
-                  document.getElementById("current-user-email").textContent = user.email;
-                  loadPendingUsers();
-              } else if (userData.approved) {
-                  showScreen("home");
-                  document.getElementById("current-user-email").textContent = user.email;
-                  loadClients();
-              } else {
-                  // User exists but not approved
-                  messageModal("تم إنشاء حسابك بنجاح. يرجى الانتظار حتى تتم الموافقة عليه من قبل المسؤول.");
-                  auth.signOut();
-              }
-          } else {
-              // This should not happen, but as a fallback
-              messageModal("خطأ في بيانات المستخدم. يرجى التواصل مع المسؤول.");
-              auth.signOut();
-          }
-      } else {
-          currentUser = null;
-          isAdmin = false;
-          showScreen("auth");
-      }
+    if (user) {
+        currentUser = user;
+        updateHeader(true);
+        const userDoc = await db.collection("users").doc(user.uid).get();
+        if (userDoc.exists) {
+            const userData = userDoc.data();
+            userRole = userData.role;
+            if (userData.approved === true) {
+                if (userRole === "admin") {
+                    showAdminPanel();
+                } else {
+                    showUserPanel();
+                }
+            } else {
+                messageModal("حسابك قيد المراجعة. يرجى الانتظار حتى يوافق المسؤول.", () => {
+                    auth.signOut();
+                });
+            }
+        } else {
+            // New user registered but not added to users collection yet
+            // This should not happen if registration adds the user doc
+            messageModal("حدث خطأ. يرجى المحاولة مرة أخرى.", () => {
+                auth.signOut();
+            });
+        }
+    } else {
+        currentUser = null;
+        userRole = null;
+        updateHeader(false);
+        showScreen("login");
+    }
   });
 
   document.getElementById("auth-form").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const email = document.getElementById("auth-email").value;
-      const password = document.getElementById("auth-password").value;
-      
-      try {
-          if (e.submitter.id === "btn-sign-in") {
-              // Sign In logic
-              await auth.signInWithEmailAndPassword(email, password);
-          }
-      } catch (error) {
-          messageModal(`فشل تسجيل الدخول: ${error.message}`);
-      }
+    e.preventDefault();
+    const email = document.getElementById("email-input").value;
+    const password = document.getElementById("password-input").value;
+    try {
+        await auth.signInWithEmailAndPassword(email, password);
+    } catch (error) {
+        messageModal(`خطأ في تسجيل الدخول: ${error.message}`);
+    }
   });
 
-  document.getElementById("btn-sign-up").addEventListener("click", async () => {
-      const email = document.getElementById("auth-email").value;
-      const password = document.getElementById("auth-password").value;
-      
-      if (!email || !password) {
-          messageModal("الرجاء إدخال البريد الإلكتروني وكلمة المرور.");
-          return;
-      }
-      
-      try {
-          const userCredential = await auth.createUserWithEmailAndPassword(email, password);
-          await db.collection("users").doc(userCredential.user.uid).set({
-              email: email,
-              role: "user", // Default role
-              approved: false // Must be approved by admin
-          });
-          messageModal("تم إنشاء الحساب بنجاح. يرجى الانتظار حتى تتم الموافقة عليه من قبل المسؤول.", () => {
-              auth.signOut();
-          });
-      } catch (error) {
-          messageModal(`فشل إنشاء الحساب: ${error.message}`);
-      }
+  document.getElementById("register-auth-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const email = document.getElementById("register-email-input").value;
+    const password = document.getElementById("register-password-input").value;
+    try {
+        const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+        await db.collection("users").doc(userCredential.user.uid).set({
+            email: email,
+            role: 'user',
+            approved: false
+        });
+        messageModal("تم إنشاء الحساب بنجاح. سيقوم المسؤول بمراجعته وتفعيله.", () => {
+            showScreen("login");
+        });
+    } catch (error) {
+        messageModal(`خطأ في إنشاء الحساب: ${error.message}`);
+    }
   });
-
-  document.getElementById("btn-sign-out").addEventListener("click", () => {
-      auth.signOut();
+  
+  document.getElementById("logout-btn").addEventListener("click", () => {
+    auth.signOut();
   });
-
-  async function loadPendingUsers() {
-      const ul = document.getElementById("pending-users-list");
-      ul.innerHTML = "";
-      
-      const usersRef = db.collection("users").where("approved", "==", false);
-      const snapshot = await usersRef.get();
-      
-      if (snapshot.empty) {
-          ul.innerHTML = "<p style='text-align: center; color: #888; padding-top: 20px;'>لا يوجد مستخدمون جدد.</p>";
-          return;
-      }
-      
-      snapshot.forEach(doc => {
-          const user = doc.data();
-          const li = document.createElement("li");
-          li.classList.add("user-item");
-          li.innerHTML = `
-              <div>${user.email}</div>
-              <div class="user-actions">
-                  <button title="قبول" data-user-id="${doc.id}" data-action="approve">✅</button>
-                  <button title="رفض" data-user-id="${doc.id}" data-action="reject">❌</button>
-              </div>
-          `;
-          li.querySelector('[data-action="approve"]').onclick = async () => {
-              await db.collection("users").doc(doc.id).update({ approved: true });
-              messageModal(`تمت الموافقة على المستخدم ${user.email}.`);
-              loadPendingUsers();
-          };
-          li.querySelector('[data-action="reject"]').onclick = async () => {
-              confirmModal(`هل أنت متأكد من رفض المستخدم ${user.email}؟`, async () => {
-                  await db.collection("users").doc(doc.id).delete();
-                  messageModal(`تم رفض وحذف المستخدم ${user.email}.`);
-                  loadPendingUsers();
-              });
-          };
-          ul.appendChild(li);
-      });
+  document.getElementById("switch-to-register").addEventListener("click", () => {
+    showScreen("register");
+  });
+  document.getElementById("switch-to-login").addEventListener("click", () => {
+    showScreen("login");
+  });
+  
+  // Admin Panel Logic
+  function showAdminPanel() {
+    showScreen("admin");
+    renderUsersList();
+  }
+  async function renderUsersList(showPendingOnly = false) {
+    const ul = document.getElementById("users-list-container");
+    ul.innerHTML = "";
+    
+    let usersQuery = db.collection("users");
+    if (showPendingOnly) {
+        usersQuery = usersQuery.where("approved", "==", false);
+    }
+    
+    const snapshot = await usersQuery.get();
+    
+    if (snapshot.empty) {
+        ul.innerHTML = "<p style='text-align: center; color: #888; padding-top: 20px;'>لا يوجد مستخدمون حاليًا.</p>";
+        return;
+    }
+    
+    snapshot.forEach(doc => {
+        const userData = doc.data();
+        const li = document.createElement("li");
+        li.innerHTML = `
+            <span>${userData.email}</span>
+            <div>
+                <span class="approval-status-${userData.approved ? 'approved' : 'pending'}">${userData.approved ? 'موافق عليه' : 'قيد المراجعة'}</span>
+                ${!userData.approved ? `<button class="approve-btn" data-uid="${doc.id}">تفعيل</button>` : ''}
+            </div>
+        `;
+        ul.appendChild(li);
+    });
+    
+    document.querySelectorAll(".approve-btn").forEach(btn => {
+        btn.addEventListener("click", async (e) => {
+            const uid = e.target.dataset.uid;
+            await db.collection("users").doc(uid).update({ approved: true });
+            renderUsersList();
+            messageModal("تم تفعيل المستخدم بنجاح.");
+        });
+    });
   }
 
-  // --- Database Logic (clients and transactions) ---
-  async function loadClients() {
-      if (!currentUser || isAdmin) return;
-      const clientsRef = db.collection("users").doc(currentUser.uid).collection("clients");
-      clientsRef.onSnapshot(snapshot => {
-          clients = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-          renderClientsList();
-          updateClientSuggestions();
-      });
-  }
-
-  async function saveClient(client) {
-      if (!currentUser || isAdmin) return;
-      const clientsRef = db.collection("users").doc(currentUser.uid).collection("clients");
-      if (client.id) {
-          await clientsRef.doc(client.id).set(client, { merge: true });
-      } else {
-          await clientsRef.add(client);
-      }
-  }
-
-  async function deleteClient(clientId) {
-      if (!currentUser || isAdmin) return;
-      await db.collection("users").doc(currentUser.uid).collection("clients").doc(clientId).delete();
-  }
-
-  async function saveTransaction(clientId, transaction) {
-      if (!currentUser || isAdmin) return;
-      const txRef = db.collection("users").doc(currentUser.uid).collection("clients").doc(clientId).collection("transactions");
-      if (transaction.id) {
-          await txRef.doc(transaction.id).set(transaction, { merge: true });
-      } else {
-          await txRef.add(transaction);
-      }
-  }
-
-  async function deleteTransaction(clientId, transactionId) {
-      if (!currentUser || isAdmin) return;
-      await db.collection("users").doc(currentUser.uid).collection("clients").doc(clientId).collection("transactions").doc(transactionId).delete();
+  document.getElementById("btn-show-pending-users").addEventListener("click", () => renderUsersList(true));
+  document.getElementById("btn-show-all-users").addEventListener("click", () => renderUsersList(false));
+  
+  // User Panel Logic
+  function showUserPanel() {
+    showScreen("user");
+    updateClientSuggestions();
+    fetchClients();
   }
   
-  function updateClientSuggestions() {
+  async function fetchClients() {
+    const clientsCollection = db.collection("clients").where("userId", "==", currentUser.uid);
+    clientsCollection.onSnapshot(snapshot => {
+        clientsData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        renderClientsList();
+        updateClientSuggestions();
+        if (currentClientId) {
+            showClientDetails();
+        }
+    });
+  }
+
+  async function updateClientSuggestions() {
     const datalist = document.getElementById("clients-datalist");
     datalist.innerHTML = "";
-    clients.forEach(client => {
+    clientsData.forEach(client => {
       const option = document.createElement("option");
       option.value = client.name;
       datalist.appendChild(option);
     });
   }
 
-  function renderClientsList(filter = "") {
+  async function renderClientsList(filter = "") {
     const ul = document.getElementById("clients-list-container");
     ul.innerHTML = "";
-    const filteredClients = clients.filter(c => c.name.toLowerCase().includes(filter.toLowerCase()));
+    const filteredClients = clientsData.filter(c => c.name.toLowerCase().includes(filter.toLowerCase()));
     
     if (filteredClients.length === 0) {
       ul.innerHTML = "<p style='text-align: center; color: #888; padding-top: 20px;'>لا يوجد عملاء بهذا الاسم.</p>";
@@ -1011,18 +1042,16 @@
           <button title="حذف العميل" data-action="delete" data-client-id="${client.id}"><span class="trash-icon">🗑️</span></button>
         </div>
       `;
-      li.onclick = (e) => {
+      li.onclick = async (e) => {
         if(e.target.closest('button')?.dataset.action === "delete") {
           e.stopPropagation();
           confirmModal(`هل أنت متأكد من حذف العميل "${client.name}"؟`, async () => {
-            await deleteClient(client.id);
-            renderClientsList();
-            updateClientSuggestions();
+            await db.collection("clients").doc(client.id).delete();
           });
         } else {
           currentClientId = client.id;
           showClientDetails();
-          showScreen("client-details");
+          showScreen("clientDetails");
         }
       };
       ul.appendChild(li);
@@ -1038,78 +1067,78 @@
     return total;
   }
 
-  async function showClientDetails() {
-      if (!currentUser || isAdmin) return;
-      const clientDoc = await db.collection("users").doc(currentUser.uid).collection("clients").doc(currentClientId).get();
-      const client = { id: clientDoc.id, ...clientDoc.data() };
-      if (!client) return;
+  function showClientDetails() {
+    const client = clientsData.find(c => c.id === currentClientId);
+    if (!client) return;
 
-      document.getElementById("client-details-name").textContent = client.name;
-      document.getElementById("add-transaction-form-client").reset();
-      renderTransactions(client);
+    document.getElementById("client-details-name").textContent = client.name;
+    document.getElementById("add-transaction-form-client").reset();
+    renderTransactions(client);
   }
 
   async function renderTransactions(client) {
     const ul = document.getElementById("transactions-list");
     ul.innerHTML = "";
+
+    const fromDate = document.getElementById("filter-from-date").value;
+    const toDate = document.getElementById("filter-to-date").value;
+
+    let transactionsRef = db.collection("clients").doc(client.id).collection("transactions");
+    if(fromDate) {
+        transactionsRef = transactionsRef.where("date", ">=", fromDate);
+    }
+    if(toDate) {
+        transactionsRef = transactionsRef.where("date", "<=", toDate);
+    }
+    const snapshot = await transactionsRef.orderBy("date", "desc").get();
     
-    const transactionsRef = db.collection("users").doc(currentUser.uid).collection("clients").doc(client.id).collection("transactions");
-    transactionsRef.onSnapshot(snapshot => {
-        const transactions = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    const transactions = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
-        const fromDate = document.getElementById("filter-from-date").value;
-        const toDate = document.getElementById("filter-to-date").value;
+    if (transactions.length === 0) {
+      ul.innerHTML = "<p style='text-align: center; color: #888; padding-top: 20px;'>لا توجد معاملات في هذه الفترة.</p>";
+    } else {
+      transactions.forEach(tx => {
+        const li = document.createElement("li");
+        li.classList.add("transaction-item");
 
-        let filteredTransactions = transactions || [];
-        if(fromDate) {
-          filteredTransactions = filteredTransactions.filter(t => t.date >= fromDate);
-        }
-        if(toDate) {
-          filteredTransactions = filteredTransactions.filter(t => t.date <= toDate);
-        }
+        const descriptionContent = tx.description + (tx.notes ? ` <span style="font-size:0.9em;color:#777;">(${tx.notes})</span>` : "");
+        
+        li.innerHTML = `
+          <div class="transaction-desc">${descriptionContent}</div>
+          <div class="transaction-date">${tx.date}</div>
+          <div class="transaction-amount ${tx.type === "purchase" ? "transaction-type-purchase" : "transaction-type-payment"}">
+            ${tx.type === "purchase" ? "+" : "-"} ${tx.amount.toFixed(2)} ريال
+          </div>
+          <div class="transaction-actions">
+            <button title="تعديل" data-tx-id="${tx.id}" data-action="edit">✏️</button>
+            <button title="حذف" data-tx-id="${tx.id}" data-action="delete"><span class="trash-icon">🗑️</span></button>
+          </div>
+        `;
 
-        if (filteredTransactions.length === 0) {
-          ul.innerHTML = "<p style='text-align: center; color: #888; padding-top: 20px;'>لا توجد معاملات في هذه الفترة.</p>";
-        } else {
-          ul.innerHTML = "";
-          filteredTransactions.sort((a, b) => new Date(b.date) - new Date(a.date));
-          filteredTransactions.forEach(tx => {
-            const li = document.createElement("li");
-            li.classList.add("transaction-item");
-
-            const descriptionContent = tx.description + (tx.notes ? ` <span style="font-size:0.9em;color:#777;">(${tx.notes})</span>` : "");
-            
-            li.innerHTML = `
-              <div class="transaction-desc">${descriptionContent}</div>
-              <div class="transaction-date">${tx.date}</div>
-              <div class="transaction-amount ${tx.type === "purchase" ? "transaction-type-purchase" : "transaction-type-payment"}">
-                ${tx.type === "purchase" ? "+" : "-"} ${tx.amount.toFixed(2)} ريال
-              </div>
-              <div class="transaction-actions">
-                <button title="تعديل" data-tx-id="${tx.id}" data-action="edit">✏️</button>
-                <button title="حذف" data-tx-id="${tx.id}" data-action="delete"><span class="trash-icon">🗑️</span></button>
-              </div>
-            `;
-
-            li.querySelector('[data-action="edit"]').onclick = (e) => {
-              e.stopPropagation();
-              openEditTransactionModal(client.id, tx);
-            };
-            li.querySelector('[data-action="delete"]').onclick = (e) => {
-              e.stopPropagation();
-              confirmModal(`هل تريد حذف هذه المعاملة؟`, async () => {
-                await deleteTransaction(client.id, tx.id);
-              });
-            };
-            ul.appendChild(li);
+        li.querySelector('[data-action="edit"]').onclick = (e) => {
+          e.stopPropagation();
+          openEditTransactionModal(client.id, tx);
+        };
+        li.querySelector('[data-action="delete"]').onclick = (e) => {
+          e.stopPropagation();
+          confirmModal(`هل تريد حذف هذه المعاملة؟`, async () => {
+            await db.collection("clients").doc(client.id).collection("transactions").doc(tx.id).delete();
           });
-        }
-        updateTotalDebtDisplay(filteredTransactions);
-    });
+        };
+        ul.appendChild(li);
+      });
+    }
+    updateTotalDebtDisplay(client.id);
   }
 
-  function updateTotalDebtDisplay(transactionsToCalculate) {
-    const total = calculateTotalDebt(transactionsToCalculate);
+  async function updateTotalDebtDisplay(clientId) {
+    const transactionsSnapshot = await db.collection("clients").doc(clientId).collection("transactions").get();
+    let total = 0;
+    transactionsSnapshot.forEach(doc => {
+        const tx = doc.data();
+        if(tx.type === "purchase") total += tx.amount;
+        else if(tx.type === "payment") total -= tx.amount;
+    });
     document.getElementById("total-debt-display").textContent = `إجمالي الدين الحالي: ${total.toFixed(2)} ريال`;
   }
 
@@ -1159,25 +1188,24 @@
 
     form.onsubmit = async (e) => {
       e.preventDefault();
-
+      
       const newDesc = document.getElementById("edit-tx-desc").value.trim();
       const newAmount = parseFloat(document.getElementById("edit-tx-amount").value);
       const newType = document.getElementById("edit-tx-type").value;
       const newNotes = document.getElementById("edit-tx-notes").value.trim();
 
-      const updatedTransaction = {
-          ...transaction,
+      await db.collection("clients").doc(clientId).collection("transactions").doc(transaction.id).update({
           description: newDesc,
           amount: newAmount,
           type: newType,
           notes: newNotes,
-      };
-      await saveTransaction(clientId, updatedTransaction);
+      });
+
       hideModal("editTransaction");
     };
   }
   document.getElementById("cancel-edit-tx").onclick = () => {
-    hideModal("edit-transaction");
+    hideModal("editTransaction");
   };
 
   document.getElementById("btn-add-transaction").onclick = () => {
@@ -1185,13 +1213,11 @@
     showModal("addTransactionClient");
   };
   document.getElementById("cancel-add-tx-client").onclick = () => {
-    hideModal("add-transaction-client");
+    hideModal("addTransactionClient");
   };
 
   document.getElementById("add-transaction-form-client").addEventListener("submit", async e => {
     e.preventDefault();
-    const client = clients.find(c => c.id === currentClientId);
-    if (!client) return;
     const form = e.target;
     
     const desc = form.querySelector("#transaction-desc-client").value.trim();
@@ -1199,41 +1225,38 @@
     const type = form.querySelector("#transaction-type-client").value;
     const notes = form.querySelector("#transaction-notes-client").value.trim();
     
-    const newTransaction = {
+    await db.collection("clients").doc(currentClientId).collection("transactions").add({
       description: desc,
       amount,
       type,
       notes,
-      date: new Date().toISOString().slice(0, 10)
-    };
-    await saveTransaction(client.id, newTransaction);
-    hideModal("add-transaction-client");
+      date: new Date().toISOString().slice(0, 10),
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    
+    hideModal("addTransactionClient");
     form.reset();
   });
 
   document.getElementById("filter-from-date").addEventListener("change", () => {
-    const client = clients.find(c => c.id === currentClientId);
-    if (client) renderTransactions(client);
+    if (currentClientId) renderTransactions(clientsData.find(c => c.id === currentClientId));
   });
   document.getElementById("filter-to-date").addEventListener("change", () => {
-    const client = clients.find(c => c.id === currentClientId);
-    if (client) renderTransactions(client);
+    if (currentClientId) renderTransactions(clientsData.find(c => c.id === currentClientId));
   });
 
-  document.getElementById("btn-export-csv").onclick = () => {
-    // This part is complex because it requires loading all transactions first.
-    // For now, let's keep it simple and assume the list is already loaded.
+  document.getElementById("btn-export-csv").onclick = async () => {
     confirmModal(`هل أنت متأكد من تصدير البيانات؟`, async () => {
-      const client = clients.find(c => c.id === currentClientId);
+      const client = clientsData.find(c => c.id === currentClientId);
       if (!client) return;
       const fromDate = document.getElementById("filter-from-date").value;
       const toDate = document.getElementById("filter-to-date").value;
-
-      const transactionsSnapshot = await db.collection("users").doc(currentUser.uid).collection("clients").doc(client.id).collection("transactions").get();
-      let transactions = transactionsSnapshot.docs.map(doc => doc.data());
   
-      if(fromDate) transactions = transactions.filter(t => t.date >= fromDate);
-      if(toDate) transactions = transactions.filter(t => t.date <= toDate);
+      let transactionsRef = db.collection("clients").doc(client.id).collection("transactions");
+      if(fromDate) transactionsRef = transactionsRef.where("date", ">=", fromDate);
+      if(toDate) transactionsRef = transactionsRef.where("date", "<=", toDate);
+      const snapshot = await transactionsRef.orderBy("date", "desc").get();
+      const transactions = snapshot.docs.map(doc => doc.data());
   
       let csvContent = "data:text/csv;charset=utf-8,";
       csvContent += "\ufeff";
@@ -1244,7 +1267,7 @@
           `"${t.description.replace(/"/g, '""')}"`,
           t.type === "purchase" ? "شراء (دين)" : "دفع",
           t.amount.toFixed(2),
-          `"${t.notes.replace(/"/g, '""') || ""}"`
+          `"${t.notes?.replace(/"/g, '""') || ""}"`
         ].join(",");
         csvContent += row + "\n";
       });
@@ -1260,10 +1283,10 @@
   };
 
   document.getElementById("btn-edit-client-name").onclick = () => {
-    const client = clients.find(c => c.id === currentClientId);
+    const client = clientsData.find(c => c.id === currentClientId);
     if (!client) return;
     document.getElementById("edit-client-name-input").value = client.name;
-    showModal("edit-client-name");
+    showModal("editClientName");
   };
 
   document.getElementById("edit-client-name-form").addEventListener("submit", async e => {
@@ -1273,28 +1296,24 @@
       messageModal("الاسم الجديد لا يمكن أن يكون فارغًا.");
       return;
     }
-    if(clients.some(c => c.name === newName && c.id !== currentClientId)) {
+    if(clientsData.some(c => c.name === newName && c.id !== currentClientId)) {
       messageModal("يوجد عميل آخر بنفس الاسم، يرجى اختيار اسم مختلف.");
       return;
     }
-    const client = clients.find(c => c.id === currentClientId);
-    if (!client) return;
-    await saveClient({ id: client.id, name: newName });
-    hideModal("edit-client-name");
+    await db.collection("clients").doc(currentClientId).update({ name: newName });
+    hideModal("editClientName");
   });
   document.getElementById("btn-cancel-edit-client").onclick = () => {
-    hideModal("edit-client-name");
+    hideModal("editClientName");
   };
 
   document.getElementById("btn-to-clients").onclick = () => {
-    renderClientsList();
     showScreen("clients");
   };
   document.getElementById("btn-back-to-home-from-clients").onclick = () => {
-    showScreen("home");
+    showScreen("user");
   };
   document.getElementById("btn-back-to-clients-from-details").onclick = () => {
-    renderClientsList();
     showScreen("clients");
   };
 
@@ -1306,39 +1325,41 @@
   };
   document.getElementById("btn-add-client").onclick = () => {
     document.getElementById("add-client-form").reset();
-    showModal("add-client");
+    showModal("addClient");
   };
   document.getElementById("btn-cancel-add-client").onclick = () => {
-    hideModal("add-client");
+    hideModal("addClient");
   };
 
   document.getElementById("add-client-form").addEventListener("submit", async e => {
     e.preventDefault();
     const name = document.getElementById("new-client-name").value.trim();
     if (!name) return;
-    if(clients.some(c => c.name === name)) {
+    if(clientsData.some(c => c.name === name)) {
       messageModal("يوجد عميل بنفس الاسم، اختر اسمًا آخر.");
       return;
     }
+    
+    const newClientDoc = await db.collection("clients").add({
+      name: name,
+      userId: currentUser.uid,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+
     const initialDebt = parseFloat(document.getElementById("new-client-initial-debt").value) || 0;
-    const initialDesc = document.getElementById("new-client-initial-desc").value.trim();
-
-    const newClient = {
-      name,
-    };
-    const clientDocRef = await db.collection("users").doc(currentUser.uid).collection("clients").add(newClient);
-
     if (initialDebt > 0) {
-      const newTransaction = {
-        description: initialDesc || "دين مبدئي",
-        amount: initialDebt,
-        type: "purchase",
-        notes: "",
-        date: new Date().toISOString().slice(0, 10)
-      };
-      await db.collection("users").doc(currentUser.uid).collection("clients").doc(clientDocRef.id).collection("transactions").add(newTransaction);
+      const initialDesc = document.getElementById("new-client-initial-desc").value.trim() || "دين مبدئي";
+      await db.collection("clients").doc(newClientDoc.id).collection("transactions").add({
+          description: initialDesc,
+          amount: initialDebt,
+          type: "purchase",
+          notes: "",
+          date: new Date().toISOString().slice(0, 10),
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
     }
-    hideModal("add-client");
+
+    hideModal("addClient");
     messageModal("تمت إضافة العميل بنجاح.");
   });
 
@@ -1364,17 +1385,18 @@
     النوع: <strong>${type === 'purchase' ? 'شراء (دين)' : 'دفع'}</strong><br>`;
 
     confirmModal(confirmationMessage, async () => {
-      let client = clients.find(c => c.name === clientName);
+      let client = clientsData.find(c => c.name === clientName);
       if (!client) {
         confirmModal("العميل غير موجود. هل تريد إضافته تلقائيًا؟", async () => {
-          const newClient = {
-            name: clientName,
-          };
-          const clientDocRef = await db.collection("users").doc(currentUser.uid).collection("clients").add(newClient);
-          processTransaction(clientDocRef.id, form);
+            const newClientDoc = await db.collection("clients").add({
+                name: clientName,
+                userId: currentUser.uid,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+            await processTransaction(newClientDoc.id, form);
         });
       } else {
-        processTransaction(client.id, form);
+        await processTransaction(client.id, form);
       }
     });
   });
@@ -1385,14 +1407,15 @@
     const type = form.querySelector("#transaction-type").value;
     const notes = form.querySelector("#transaction-notes").value.trim();
 
-    const newTransaction = {
-      description: desc,
-      amount,
-      type,
-      notes,
-      date: new Date().toISOString().slice(0, 10)
-    };
-    await db.collection("users").doc(currentUser.uid).collection("clients").doc(clientId).collection("transactions").add(newTransaction);
+    await db.collection("clients").doc(clientId).collection("transactions").add({
+        description: desc,
+        amount,
+        type,
+        notes,
+        date: new Date().toISOString().slice(0, 10),
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+
     messageModal("تم حفظ المعاملة بنجاح!", () => {
       form.reset();
     });
@@ -1401,9 +1424,6 @@
   document.getElementById("search-client-input").addEventListener("input", (e) => {
     renderClientsList(e.target.value);
   });
-
-})();
 </script>
-
 </body>
 </html>
