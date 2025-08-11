@@ -297,55 +297,6 @@
     gap: 10px;
     margin-top: 20px;
   }
-  .clients-header,
-  .client-details-header {
-    background: var(--card-bg);
-    padding: 10px;
-    position: sticky;
-    top: 0;
-    z-index: 99;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
-    margin-bottom: 20px;
-  }
-  .clients-controls,
-  .client-details-controls {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 10px;
-  }
-  .clients-controls h2,
-  .client-details-controls h2 {
-    margin: 0;
-    flex-grow: 1;
-    text-align: center;
-  }
-  .clients-controls button,
-  .client-details-controls button {
-    padding: 8px 12px;
-    white-space: nowrap;
-    min-width: unset;
-  }
-  #search-client-input {
-    margin-top: 0;
-    margin-bottom: 0;
-  }
-  #btn-back-to-home-from-clients,
-  #btn-add-client,
-  #btn-back-to-clients-from-details,
-  #btn-edit-client-name {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-  }
-  .icon-btn {
-    font-size: 1.2rem;
-  }
-  .trash-icon {
-    color: var(--danger-color);
-  }
   .btn-group-main {
     display: flex;
     flex-direction: column;
@@ -474,6 +425,41 @@
     justify-content: center;
     align-items: center;
     box-shadow: var(--shadow-medium);
+  }
+  .clients-header,
+  .client-details-header {
+    background: var(--card-bg);
+    padding: 10px;
+    position: sticky;
+    top: 0;
+    z-index: 99;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    margin-bottom: 20px;
+  }
+  .clients-controls,
+  .client-details-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  .clients-controls h2,
+  .client-details-controls h2 {
+    margin: 0;
+    flex-grow: 1;
+    text-align: center;
+  }
+  .clients-controls button,
+  .client-details-controls button {
+    padding: 8px 12px;
+    white-space: nowrap;
+    min-width: unset;
+  }
+  #search-client-input {
+    margin-top: 0;
+    margin-bottom: 0;
   }
   .approval-status-pending,
   .approval-status-approved {
@@ -815,14 +801,14 @@
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 <script>
-  // Your Firebase configuration
+  // Your web app's Firebase configuration
   const firebaseConfig = {
-    apiKey: "AIzaSyC...", // ضع هنا مفتاح API الخاص بك
+    apiKey: "AIzaSyAGdh40AO3JvX1WQ3IfMFgSoDzTixmnCCA",
     authDomain: "azapp-61227.firebaseapp.com",
     projectId: "azapp-61227",
-    storageBucket: "azapp-61227.appspot.com",
-    messagingSenderId: "...",
-    appId: "..."
+    storageBucket: "azapp-61227.firebasestorage.app",
+    messagingSenderId: "1023006420463",
+    appId: "1:1023006420463:web:0e3b09aed5473efd381a1a"
   };
 
   firebase.initializeApp(firebaseConfig);
