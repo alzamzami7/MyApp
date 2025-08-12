@@ -15,6 +15,8 @@
     --shadow-medium: 0 4px 15px rgba(0, 0, 0, 0.2);
     --success-color: #28a745;
     --danger-color: #dc3545;
+    --warning-color: #ffc107;
+    --info-color: #17a2b8;
   }
   body {
     font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
@@ -38,7 +40,7 @@
     align-items: center;
     position: sticky;
     top: 0;
-    box-shadow: var(--shadow-light); /* إضافة ظل للهيدر */
+    box-shadow: var(--shadow-light);
   }
   header h1 {
     margin: 0;
@@ -168,7 +170,7 @@
     font-size: 0.85rem;
     color: #555;
     text-align: center;
-    direction: ltr; /* لتنسيق التاريخ والوقت بشكل صحيح */
+    direction: ltr;
   }
   .transaction-amount {
     font-weight: 700;
@@ -489,31 +491,97 @@
     margin-bottom: 0;
   }
   .approval-status-pending,
-  .approval-status-approved {
+  .approval-status-approved,
+  .approval-status-expired,
+  .approval-status-restricted {
     padding: 5px 10px;
     border-radius: 5px;
     font-weight: bold;
     font-size: 0.8rem;
   }
   .approval-status-pending {
-    background-color: #ffc107;
+    background-color: var(--warning-color);
     color: #343a40;
   }
   .approval-status-approved {
-    background-color: #28a745;
+    background-color: var(--success-color);
     color: #fff;
   }
-  #admin-controls {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
+  .approval-status-expired,
+  .approval-status-restricted {
+    background-color: var(--danger-color);
+    color: #fff;
+  }
+  .admin-panel-header {
+    background: var(--card-bg);
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: var(--shadow-medium);
+  }
+  .admin-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 15px;
     margin-bottom: 20px;
   }
-  #users-list-container li {
+  .admin-stat-card {
+    background: var(--bg-color);
+    padding: 15px;
+    border-radius: 8px;
+    text-align: center;
+  }
+  .admin-stat-card h4 {
+    margin: 0 0 5px 0;
+    font-size: 1rem;
+    color: #666;
+  }
+  .admin-stat-card .count {
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--primary-color);
+  }
+  .admin-filters {
     display: flex;
     justify-content: space-between;
     align-items: center;
     gap: 10px;
+    margin-top: 15px;
+    margin-bottom: 20px;
+  }
+  .admin-filters .filter-btn-group {
+    display: flex;
+    gap: 5px;
+  }
+  .admin-filters .filter-btn-group button {
+    padding: 8px 12px;
+    font-size: 0.9rem;
+    background-color: #e9ecef;
+    color: #333;
+    transition: background-color 0.3s;
+  }
+  .admin-filters .filter-btn-group button.active {
+    background-color: var(--primary-color);
+    color: white;
+  }
+  .admin-filters #search-user-input {
+    flex-grow: 1;
+    margin: 0;
+  }
+  .admin-notifications {
+    padding: 10px;
+    background-color: #fff3cd;
+    color: #664d03;
+    border-radius: 8px;
+    border: 1px solid #ffecb5;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .admin-notifications a {
+    color: #664d03;
+    font-weight: bold;
+    text-decoration: underline;
   }
   #login-screen,
   #register-screen {
@@ -597,6 +665,43 @@
     padding: 8px 12px;
     margin: 0;
   }
+  #user-details-modal .modal-box {
+    max-width: 600px;
+  }
+  #user-details-modal .user-info-details {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 20px;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 8px;
+  }
+  #user-details-modal .user-info-details div {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 5px;
+    border-bottom: 1px solid #e9ecef;
+  }
+  #user-details-modal .user-info-details div:last-child {
+      border-bottom: none;
+  }
+  #user-details-modal .user-info-details div span:first-child {
+    font-weight: bold;
+    color: #333;
+  }
+  #user-details-modal .user-info-details div span:last-child {
+    color: #666;
+  }
+  #user-details-modal .user-details-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  #user-details-modal .user-details-actions button {
+    width: 100%;
+  }
   @media (max-width: 600px) {
     .filter-dates {
       flex-direction: row;
@@ -626,6 +731,19 @@
     }
     .date-filter-row .filter-dates {
       flex-wrap: wrap;
+    }
+    .admin-filters {
+      flex-wrap: wrap;
+    }
+    .admin-filters .filter-btn-group {
+      flex-grow: 1;
+      justify-content: center;
+    }
+    .admin-filters #search-user-input {
+      order: -1;
+    }
+    .admin-stats {
+      grid-template-columns: 1fr 1fr;
     }
   }
 </style>
@@ -658,6 +776,8 @@
       <form id="register-auth-form">
         <input type="email" id="register-email-input" placeholder="البريد الإلكتروني" required />
         <input type="password" id="register-password-input" placeholder="كلمة المرور" required />
+        <label for="user-notes">ملاحظات (اختياري)</label>
+        <textarea id="user-notes" rows="3" placeholder="عرّف عن نفسك لتسهيل عملية الموافقة"></textarea>
         <button type="submit" class="submit-btn">إنشاء الحساب</button>
         <button type="button" id="switch-to-login">لدي حساب بالفعل</button>
       </form>
@@ -665,10 +785,38 @@
   </section>
 
   <section id="admin-screen" class="screen">
-    <h2>لوحة تحكم المسؤول</h2>
-    <div id="admin-controls">
-      <button id="btn-show-pending-users">عرض المستخدمين قيد المراجعة</button>
-      <button id="btn-show-all-users">عرض جميع المستخدمين</button>
+    <div class="admin-panel-header">
+      <h2>لوحة تحكم المسؤول</h2>
+      <div class="admin-stats">
+        <div class="admin-stat-card">
+          <h4>إجمالي المستخدمين</h4>
+          <span class="count" id="total-users-count">0</span>
+        </div>
+        <div class="admin-stat-card">
+          <h4>قيد المراجعة</h4>
+          <span class="count" id="pending-users-count">0</span>
+        </div>
+        <div class="admin-stat-card">
+          <h4>موافق عليهم</h4>
+          <span class="count" id="approved-users-count">0</span>
+        </div>
+        <div class="admin-stat-card">
+          <h4>منتهي الصلاحية</h4>
+          <span class="count" id="expired-users-count">0</span>
+        </div>
+      </div>
+      <div id="pending-users-notification" class="admin-notifications hidden">
+          يوجد مستخدمون جدد في انتظار المراجعة. <a href="#" id="link-to-pending">عرض</a>
+      </div>
+      <div class="admin-filters">
+        <input type="text" id="search-user-input" placeholder="ابحث عن مستخدم..." />
+        <div class="filter-btn-group">
+          <button data-filter="all" class="active">الكل</button>
+          <button data-filter="pending">قيد المراجعة</button>
+          <button data-filter="approved">موافق عليهم</button>
+          <button data-filter="expired">منتهي الصلاحية</button>
+        </div>
+      </div>
     </div>
     <ul id="users-list-container" class="admin-users-list"></ul>
   </section>
@@ -880,6 +1028,41 @@
     </div>
   </div>
 </div>
+<div class="modal-overlay" id="user-details-modal">
+  <div class="modal-box">
+    <h3 id="user-details-title"></h3>
+    <div class="user-info-details">
+      <div><span>البريد الإلكتروني:</span> <span id="user-details-email"></span></div>
+      <div><span>تاريخ الإنشاء:</span> <span id="user-details-creation-date"></span></div>
+      <div><span>حالة الحساب:</span> <span id="user-details-status"></span></div>
+      <div><span>تاريخ انتهاء الصلاحية:</span> <span id="user-details-expiry-date"></span></div>
+      <div><span>ملاحظات المستخدم:</span> <span id="user-details-notes"></span></div>
+    </div>
+    <div class="user-details-actions">
+      <button id="btn-approve-user" class="submit-btn hidden">تفعيل المستخدم</button>
+      <button id="btn-update-user-expiry" class="secondary-btn hidden">تعديل تاريخ الانتهاء</button>
+      <button id="btn-restrict-user" class="secondary-btn hidden">تقييد المستخدم</button>
+      <button id="btn-delete-user" class="secondary-btn hidden">حذف المستخدم</button>
+      <button class="cancel-btn" id="btn-close-user-details">إغلاق</button>
+    </div>
+  </div>
+</div>
+<div class="modal-overlay" id="set-expiry-modal">
+  <div class="modal-box">
+    <h3>تحديد تاريخ انتهاء الصلاحية</h3>
+    <form id="set-expiry-form">
+      <div class="form-group">
+        <label for="expiry-date-input" class="required">تاريخ الانتهاء</label>
+        <input type="date" id="expiry-date-input" required />
+      </div>
+      <div class="modal-buttons">
+        <button type="submit">حفظ</button>
+        <button type="button" class="cancel-btn" id="btn-cancel-expiry">إلغاء</button>
+      </div>
+    </form>
+  </div>
+</div>
+
 <footer>
   <button id="btn-to-about">?</button>
   <p>تم تطويره بواسطة - عبدالله الزمزمي</p>
@@ -919,20 +1102,21 @@
     addClient: document.getElementById("add-client-modal"),
     editClientName: document.getElementById("edit-client-name-modal"),
     addTransactionClient: document.getElementById("add-transaction-client-modal"),
-    about: document.getElementById("about-modal")
+    about: document.getElementById("about-modal"),
+    userDetails: document.getElementById("user-details-modal"),
+    setExpiry: document.getElementById("set-expiry-modal")
   };
   let currentClientId = null;
   let currentUser = null;
   let clientsData = [];
   let userRole = null;
-  let unsubscribeTransactions = null; // متغير لحفظ دالة إلغاء الاشتراك
+  let allUsersData = []; // Store all users for filtering and stats
+  let unsubscribeTransactions = null;
 
-  // دالة showScreen تم تحديثها للتحكم في عرض الهيدر
   function showScreen(screenName) {
     document.querySelector('main').classList.remove('home-active', 'clients-active', 'client-details-active');
     Object.values(screens).forEach(screen => screen.classList.remove("active"));
     screens[screenName].classList.add("active");
-    // تحديث الهيدر بناءً على الواجهة الحالية
     const header = document.getElementById("app-header");
     if (screenName === 'user' || screenName === 'admin') {
       header.classList.remove("hidden");
@@ -968,6 +1152,17 @@
         if (userDoc.exists) {
             const userData = userDoc.data();
             userRole = userData.role;
+            const now = new Date();
+
+            // فحص تاريخ انتهاء الصلاحية
+            if (userData.approved === true && userData.expiryDate && userData.expiryDate.toDate() < now) {
+                await db.collection("users").doc(user.uid).update({ approved: false });
+                messageModal("انتهت صلاحية حسابك. تم تقييده تلقائياً. يرجى التواصل مع المسؤول.", () => {
+                    auth.signOut();
+                });
+                return;
+            }
+
             if (userData.approved === true) {
                 if (userRole === "admin") {
                     showAdminPanel();
@@ -1007,12 +1202,16 @@
     e.preventDefault();
     const email = document.getElementById("register-email-input").value;
     const password = document.getElementById("register-password-input").value;
+    const notes = document.getElementById("user-notes").value.trim();
     try {
         const userCredential = await auth.createUserWithEmailAndPassword(email, password);
         await db.collection("users").doc(userCredential.user.uid).set({
             email: email,
             role: 'user',
-            approved: false
+            approved: false,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+            expiryDate: null,
+            notes: notes
         });
         messageModal("تم إنشاء الحساب بنجاح. سيقوم المسؤول بمراجعته وتفعيله.", () => {
             showScreen("login");
@@ -1037,69 +1236,222 @@
   // Admin Panel Logic
   function showAdminPanel() {
     showScreen("admin");
-    renderUsersList();
+    fetchUsersAndRender();
+
+    document.querySelectorAll('.admin-filters .filter-btn-group button').forEach(button => {
+        button.addEventListener('click', (e) => {
+            document.querySelectorAll('.admin-filters .filter-btn-group button').forEach(btn => btn.classList.remove('active'));
+            e.target.classList.add('active');
+            renderUsersList(e.target.dataset.filter);
+        });
+    });
+    document.getElementById('search-user-input').addEventListener('input', (e) => {
+        const activeFilter = document.querySelector('.admin-filters .filter-btn-group button.active').dataset.filter;
+        renderUsersList(activeFilter, e.target.value.trim());
+    });
+    document.getElementById('link-to-pending').addEventListener('click', (e) => {
+        e.preventDefault();
+        document.querySelectorAll('.admin-filters .filter-btn-group button').forEach(btn => btn.classList.remove('active'));
+        document.querySelector('[data-filter="pending"]').classList.add('active');
+        renderUsersList('pending');
+    });
   }
-  async function renderUsersList(showPendingOnly = false) {
+
+  async function fetchUsersAndRender() {
+    const snapshot = await db.collection("users").get();
+    allUsersData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    updateAdminStats();
+    renderUsersList('all');
+  }
+
+  function updateAdminStats() {
+    let totalUsers = 0;
+    let pendingUsers = 0;
+    let approvedUsers = 0;
+    let expiredUsers = 0;
+    const now = new Date();
+
+    allUsersData.forEach(user => {
+      totalUsers++;
+      if (user.approved === true) {
+        if (user.expiryDate && user.expiryDate.toDate() < now) {
+          expiredUsers++;
+        } else {
+          approvedUsers++;
+        }
+      } else {
+        pendingUsers++;
+      }
+    });
+
+    document.getElementById('total-users-count').textContent = totalUsers;
+    document.getElementById('pending-users-count').textContent = pendingUsers;
+    document.getElementById('approved-users-count').textContent = approvedUsers;
+    document.getElementById('expired-users-count').textContent = expiredUsers;
+
+    const notificationBanner = document.getElementById('pending-users-notification');
+    if (pendingUsers > 0) {
+      notificationBanner.classList.remove('hidden');
+      notificationBanner.querySelector('a').textContent = `عرض (${pendingUsers})`;
+    } else {
+      notificationBanner.classList.add('hidden');
+    }
+  }
+
+  function renderUsersList(filter = 'all', searchTerm = '') {
     const ul = document.getElementById("users-list-container");
     ul.innerHTML = "";
     
-    let usersQuery = db.collection("users");
-    if (showPendingOnly) {
-        usersQuery = usersQuery.where("approved", "==", false);
-    }
-    
-    const snapshot = await usersQuery.get();
-    
-    if (snapshot.empty) {
-        ul.innerHTML = "<p style='text-align: center; color: #888; padding-top: 20px;'>لا يوجد مستخدمون حاليًا.</p>";
+    let filteredUsers = allUsersData.filter(user => {
+        const matchesSearch = user.email.toLowerCase().includes(searchTerm.toLowerCase());
+        const now = new Date();
+        
+        let matchesFilter = false;
+        if (filter === 'all') {
+            matchesFilter = true;
+        } else if (filter === 'pending' && user.approved === false) {
+            matchesFilter = true;
+        } else if (filter === 'approved' && user.approved === true && (!user.expiryDate || user.expiryDate.toDate() >= now)) {
+            matchesFilter = true;
+        } else if (filter === 'expired' && user.approved === true && user.expiryDate && user.expiryDate.toDate() < now) {
+            matchesFilter = true;
+        }
+        return matchesSearch && matchesFilter;
+    });
+
+    if (filteredUsers.length === 0) {
+        ul.innerHTML = "<p style='text-align: center; color: #888; padding-top: 20px;'>لا يوجد مستخدمون حاليًا يطابقون هذا الفلتر أو البحث.</p>";
         return;
     }
     
-    snapshot.forEach(doc => {
-        const userData = doc.data();
+    filteredUsers.forEach(userData => {
         const li = document.createElement("li");
         li.classList.add("admin-user-card");
+        let statusClass = "approval-status-pending";
+        let statusText = "قيد المراجعة";
+        if (userData.approved === true) {
+            const now = new Date();
+            if (userData.expiryDate && userData.expiryDate.toDate() < now) {
+                statusClass = "approval-status-expired";
+                statusText = "منتهي الصلاحية";
+            } else {
+                statusClass = "approval-status-approved";
+                statusText = "موافق عليه";
+            }
+        }
+        
         li.innerHTML = `
             <div class="admin-user-info">
                 <h4>${userData.email}</h4>
-                <span class="approval-status-${userData.approved ? 'approved' : 'pending'}">${userData.approved ? 'موافق عليه' : 'قيد المراجعة'}</span>
+                <span class="${statusClass}">${statusText}</span>
             </div>
             <div class="admin-user-actions">
-                ${!userData.approved ? `<button class="approve-btn" data-uid="${doc.id}">تفعيل</button>` : `<button class="restrict-btn" data-uid="${doc.id}">تقييد</button>`}
+                <button class="details-btn" data-uid="${userData.id}">التفاصيل</button>
             </div>
         `;
         ul.appendChild(li);
     });
     
-    document.querySelectorAll(".approve-btn").forEach(btn => {
-        btn.addEventListener("click", async (e) => {
-            const uid = e.target.dataset.uid;
-            await db.collection("users").doc(uid).update({ approved: true });
-            renderUsersList(document.getElementById("btn-show-pending-users").classList.contains('active'));
-            messageModal("تم تفعيل المستخدم بنجاح.");
-        });
-    });
-
-    document.querySelectorAll(".restrict-btn").forEach(btn => {
-        btn.addEventListener("click", async (e) => {
-            const uid = e.target.dataset.uid;
-            await db.collection("users").doc(uid).update({ approved: false });
-            renderUsersList(document.getElementById("btn-show-pending-users").classList.contains('active'));
-            messageModal("تم تقييد المستخدم بنجاح.");
-        });
+    document.querySelectorAll(".details-btn").forEach(btn => {
+      btn.addEventListener("click", async (e) => {
+        const uid = e.target.dataset.uid;
+        const userDoc = await db.collection("users").doc(uid).get();
+        if (userDoc.exists) {
+          const userData = userDoc.data();
+          showUserDetailsModal(uid, userData);
+        }
+      });
     });
   }
 
-  document.getElementById("btn-show-pending-users").addEventListener("click", () => {
-    document.getElementById("btn-show-pending-users").classList.add('active');
-    document.getElementById("btn-show-all-users").classList.remove('active');
-    renderUsersList(true);
-  });
-  document.getElementById("btn-show-all-users").addEventListener("click", () => {
-    document.getElementById("btn-show-pending-users").classList.remove('active');
-    document.getElementById("btn-show-all-users").classList.add('active');
-    renderUsersList(false);
-  });
+  function showUserDetailsModal(uid, userData) {
+    const modal = modals.userDetails;
+    document.getElementById("user-details-title").textContent = `تفاصيل المستخدم: ${userData.email}`;
+    document.getElementById("user-details-email").textContent = userData.email;
+    document.getElementById("user-details-creation-date").textContent = userData.createdAt ? userData.createdAt.toDate().toLocaleDateString() : 'غير متوفر';
+
+    const now = new Date();
+    let statusText = "قيد المراجعة";
+    let statusClass = "approval-status-pending";
+    if (userData.approved === true) {
+        if (userData.expiryDate && userData.expiryDate.toDate() < now) {
+            statusText = "منتهي الصلاحية";
+            statusClass = "approval-status-expired";
+        } else {
+            statusText = "موافق عليه";
+            statusClass = "approval-status-approved";
+        }
+    }
+    document.getElementById("user-details-status").textContent = statusText;
+    document.getElementById("user-details-status").className = statusClass;
+    document.getElementById("user-details-expiry-date").textContent = userData.expiryDate ? userData.expiryDate.toDate().toLocaleDateString() : 'لا يوجد';
+    document.getElementById("user-details-notes").textContent = userData.notes || 'لا يوجد';
+    
+    document.getElementById("btn-approve-user").classList.toggle("hidden", userData.approved === true);
+    document.getElementById("btn-update-user-expiry").classList.toggle("hidden", userData.approved !== true);
+    document.getElementById("btn-restrict-user").classList.toggle("hidden", userData.approved !== true);
+    document.getElementById("btn-delete-user").classList.remove("hidden");
+
+    document.getElementById("btn-approve-user").onclick = () => {
+        hideModal("userDetails");
+        confirmModal("هل أنت متأكد من تفعيل هذا المستخدم؟", () => {
+            showSetExpiryModal(uid);
+        });
+    };
+    document.getElementById("btn-update-user-expiry").onclick = () => {
+        hideModal("userDetails");
+        showSetExpiryModal(uid);
+    };
+    document.getElementById("btn-restrict-user").onclick = () => {
+        hideModal("userDetails");
+        confirmModal("هل أنت متأكد من تقييد هذا المستخدم؟", async () => {
+            await db.collection("users").doc(uid).update({ approved: false, expiryDate: null });
+            messageModal("تم تقييد المستخدم بنجاح.", () => {
+                fetchUsersAndRender();
+            });
+        });
+    };
+    document.getElementById("btn-delete-user").onclick = () => {
+      hideModal("userDetails");
+      confirmModal("هل أنت متأكد من حذف هذا المستخدم وجميع بياناته؟", async () => {
+        const clientsSnapshot = await db.collection("clients").where("userId", "==", uid).get();
+        const batch = db.batch();
+        clientsSnapshot.forEach(doc => {
+            batch.delete(doc.ref);
+        });
+        await batch.commit();
+
+        await db.collection("users").doc(uid).delete();
+        messageModal("تم حذف المستخدم وجميع بياناته بنجاح.", () => {
+            fetchUsersAndRender();
+        });
+      });
+    };
+    document.getElementById("btn-close-user-details").onclick = () => hideModal("userDetails");
+    
+    showModal("userDetails");
+  }
+
+  function showSetExpiryModal(uid) {
+    const modal = modals.setExpiry;
+    document.getElementById("expiry-date-input").value = "";
+    document.getElementById("set-expiry-form").onsubmit = async (e) => {
+        e.preventDefault();
+        const expiryDate = document.getElementById("expiry-date-input").value;
+        const expiryDateObj = new Date(expiryDate);
+        expiryDateObj.setHours(23, 59, 59, 999);
+        await db.collection("users").doc(uid).update({ 
+            approved: true,
+            expiryDate: firebase.firestore.Timestamp.fromDate(expiryDateObj)
+        });
+        hideModal("setExpiry");
+        messageModal("تم تفعيل المستخدم وتحديد تاريخ الانتهاء بنجاح.", () => {
+            fetchUsersAndRender();
+        });
+    };
+    document.getElementById("btn-cancel-expiry").onclick = () => hideModal("setExpiry");
+    showModal("setExpiry");
+  }
   
   // User Panel Logic
   function showUserPanel() {
@@ -1124,7 +1476,6 @@
     clientsCollection.onSnapshot(snapshot => {
       clientsData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
       
-      // Sort clients: those with lastTransactionAt first (descending), then the rest
       clientsData.sort((a, b) => {
           const aDate = a.lastTransactionAt ? a.lastTransactionAt.toDate() : new Date(0);
           const bDate = b.lastTransactionAt ? b.lastTransactionAt.toDate() : new Date(0);
@@ -1382,7 +1733,7 @@
     };
   }
   document.getElementById("cancel-edit-tx").onclick = () => {
-    hideModal("editTransaction");
+    hideModal("edit-transaction-modal");
   };
 
   document.getElementById("btn-add-transaction").onclick = () => {
@@ -1566,7 +1917,7 @@
       name: name,
       userId: currentUser.uid,
       createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-      lastTransactionAt: null, // Added this field for new clients
+      lastTransactionAt: null,
     });
 
     const initialDebt = parseFloat(document.getElementById("new-client-initial-debt").value) || 0;
@@ -1618,7 +1969,7 @@
                 name: clientName,
                 userId: currentUser.uid,
                 createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                lastTransactionAt: null, // Added this field for new clients
+                lastTransactionAt: null,
             });
             await processTransaction(newClientDoc.id, form);
         });
