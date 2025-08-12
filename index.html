@@ -139,6 +139,21 @@
   }
   .client-item {
     cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .client-info {
+    flex-grow: 1;
+  }
+  .client-info .client-name {
+    font-weight: bold;
+  }
+  .client-info .client-last-tx {
+    font-size: 0.8em;
+    color: #666;
+    display: block;
+    direction: ltr;
   }
   .transaction-item {
     display: grid;
@@ -258,7 +273,6 @@
     text-align: center;
     padding: 15px;
     font-size: 0.9rem;
-    color: #888;
     position: relative;
   }
   #btn-to-about {
@@ -911,8 +925,9 @@
   let currentUser = null;
   let clientsData = [];
   let userRole = null;
+  let unsubscribeTransactions = null; // متغير لحفظ دالة إلغاء الاشتراك
 
-  // التعديل الأول: دالة showScreen تم تحديثها للتحكم في عرض الهيدر
+  // دالة showScreen تم تحديثها للتحكم في عرض الهيدر
   function showScreen(screenName) {
     document.querySelector('main').classList.remove('home-active', 'clients-active', 'client-details-active');
     Object.values(screens).forEach(screen => screen.classList.remove("active"));
@@ -936,8 +951,10 @@
   }
 
   function showModal(modalName) {
+      Object.values(modals).forEach(modal => modal.classList.remove("active"));
       modals[modalName].classList.add("active");
   }
+
   function hideModal(modalName) {
       modals[modalName].classList.remove("active");
   }
@@ -963,8 +980,6 @@
                 });
             }
         } else {
-            // New user registered but not added to users collection yet
-            // This should not happen if registration adds the user doc
             messageModal("حدث خطأ. يرجى المحاولة مرة أخرى.", () => {
                 auth.signOut();
             });
@@ -1021,7 +1036,6 @@
   
   // Admin Panel Logic
   function showAdminPanel() {
-    // تم إزالة استدعاء updateHeader هنا لأن showScreen تقوم بذلك الآن
     showScreen("admin");
     renderUsersList();
   }
@@ -1043,7 +1057,6 @@
     
     snapshot.forEach(doc => {
         const userData = doc.data();
-        // التعديل الخامس: تحسين واجهة المسؤول
         const li = document.createElement("li");
         li.classList.add("admin-user-card");
         li.innerHTML = `
@@ -1090,12 +1103,10 @@
   
   // User Panel Logic
   function showUserPanel() {
-    // تم إزالة استدعاء updateHeader هنا لأن showScreen تقوم بذلك الآن
     showScreen("user");
     updateClientSuggestions();
     fetchClients();
     
-    // التعديل الثالث: جعل حقل الوصف غير إلزامي عند الدفع في الواجهة الرئيسية
     document.getElementById("transaction-type").addEventListener("change", (e) => {
       const descInput = document.getElementById("transaction-desc");
       if (e.target.value === "payment") {
@@ -1111,12 +1122,20 @@
   async function fetchClients() {
     const clientsCollection = db.collection("clients").where("userId", "==", currentUser.uid);
     clientsCollection.onSnapshot(snapshot => {
-        clientsData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        renderClientsList();
-        updateClientSuggestions();
-        if (currentClientId) {
-            showClientDetails();
-        }
+      clientsData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      
+      // Sort clients: those with lastTransactionAt first (descending), then the rest
+      clientsData.sort((a, b) => {
+          const aDate = a.lastTransactionAt ? a.lastTransactionAt.toDate() : new Date(0);
+          const bDate = b.lastTransactionAt ? b.lastTransactionAt.toDate() : new Date(0);
+          return bDate - aDate;
+      });
+
+      renderClientsList();
+      updateClientSuggestions();
+      if (currentClientId) {
+        showClientDetails();
+      }
     });
   }
 
@@ -1143,8 +1162,12 @@
     filteredClients.forEach(client => {
       const li = document.createElement("li");
       li.classList.add("client-item");
+      const lastTxTime = client.lastTransactionAt ? `آخر معاملة: ${client.lastTransactionAt.toDate().toLocaleDateString('ar-SY', { year: 'numeric', month: 'short', day: 'numeric' })}` : '';
       li.innerHTML = `
-        <span>${client.name}</span>
+        <div class="client-info">
+          <span class="client-name">${client.name}</span>
+          <span class="client-last-tx">${lastTxTime}</span>
+        </div>
         <div class="client-actions">
           <button title="حذف العميل" data-action="delete" data-client-id="${client.id}"><span class="trash-icon">🗑️</span></button>
         </div>
@@ -1173,93 +1196,97 @@
     });
     return total;
   }
-
+  
   function showClientDetails() {
-    const client = clientsData.find(c => c.id === currentClientId);
-    if (!client) return;
-
-    document.getElementById("client-details-name").textContent = client.name;
-    document.getElementById("add-transaction-form-client").reset();
-    renderTransactions(client);
+      const client = clientsData.find(c => c.id === currentClientId);
+      if (!client) return;
+  
+      document.getElementById("client-details-name").textContent = client.name;
+      document.getElementById("add-transaction-form-client").reset();
+      
+      if (unsubscribeTransactions) {
+          unsubscribeTransactions();
+      }
+      renderTransactions(client);
   }
 
   async function renderTransactions(client) {
     const ul = document.getElementById("transactions-list");
-    ul.innerHTML = "";
-
+    
     const fromDateStr = document.getElementById("filter-from-date").value;
     const toDateStr = document.getElementById("filter-to-date").value;
     
     let transactionsRef = db.collection("clients").doc(client.id).collection("transactions");
 
-    // التعديل الثالث: إصلاح التصفية حسب التاريخ باستخدام حقل createdAt
     if(fromDateStr) {
       const fromDate = new Date(fromDateStr);
       transactionsRef = transactionsRef.where("createdAt", ">=", fromDate);
     }
     if(toDateStr) {
       const toDate = new Date(toDateStr);
-      toDate.setHours(23, 59, 59, 999); // لضمان تضمين المعاملات في آخر اليوم المحدد
+      toDate.setHours(23, 59, 59, 999);
       transactionsRef = transactionsRef.where("createdAt", "<=", toDate);
     }
     
-    const snapshot = await transactionsRef.orderBy("createdAt", "desc").get();
-    
-    const transactions = snapshot.docs.map(doc => {
-      const data = doc.data();
-      return { 
-        id: doc.id,
-        ...data,
-        createdAt: data.createdAt ? data.createdAt.toDate() : new Date(data.date)
-      };
-    });
-
-    if (transactions.length === 0) {
-      ul.innerHTML = "<p style='text-align: center; color: #888; padding-top: 20px;'>لا توجد معاملات في هذه الفترة.</p>";
-    } else {
-      transactions.forEach(tx => {
-        const li = document.createElement("li");
-        li.classList.add("transaction-item");
-
-        const createdAtDate = tx.createdAt;
-        const formattedDate = createdAtDate.toLocaleDateString('ar-SY', {
-          year: 'numeric',
-          month: 'numeric',
-          day: 'numeric'
-        });
-        const formattedTime = createdAtDate.toLocaleTimeString('ar-SY', {
-          hour: '2-digit',
-          minute: '2-digit'
-        });
-
-        const descriptionContent = tx.description + (tx.notes ? ` <span style="font-size:0.9em;color:#777;">(${tx.notes})</span>` : "");
+    unsubscribeTransactions = transactionsRef.orderBy("createdAt", "desc").onSnapshot(snapshot => {
+        ul.innerHTML = "";
         
-        li.innerHTML = `
-          <div class="transaction-desc">${descriptionContent}</div>
-          <div class="transaction-date">${formattedDate} <br> ${formattedTime}</div>
-          <div class="transaction-amount ${tx.type === "purchase" ? "transaction-type-purchase" : "transaction-type-payment"}">
-            ${tx.type === "purchase" ? "+" : "-"} ${tx.amount.toFixed(2)} ريال
-          </div>
-          <div class="transaction-actions">
-            <button title="تعديل" data-tx-id="${tx.id}" data-action="edit">✏️</button>
-            <button title="حذف" data-tx-id="${tx.id}" data-action="delete"><span class="trash-icon">🗑️</span></button>
-          </div>
-        `;
+        const transactions = snapshot.docs.map(doc => {
+            const data = doc.data();
+            return { 
+                id: doc.id,
+                ...data,
+                createdAt: data.createdAt ? data.createdAt.toDate() : new Date(data.date)
+            };
+        });
 
-        li.querySelector('[data-action="edit"]').onclick = (e) => {
-          e.stopPropagation();
-          openEditTransactionModal(client.id, tx);
-        };
-        li.querySelector('[data-action="delete"]').onclick = (e) => {
-          e.stopPropagation();
-          confirmModal(`هل تريد حذف هذه المعاملة؟`, async () => {
-            await db.collection("clients").doc(client.id).collection("transactions").doc(tx.id).delete();
-          });
-        };
-        ul.appendChild(li);
-      });
-    }
-    updateTotalDebtDisplay(client.id);
+        if (transactions.length === 0) {
+            ul.innerHTML = "<p style='text-align: center; color: #888; padding-top: 20px;'>لا توجد معاملات في هذه الفترة.</p>";
+        } else {
+            transactions.forEach(tx => {
+                const li = document.createElement("li");
+                li.classList.add("transaction-item");
+
+                const createdAtDate = tx.createdAt;
+                const formattedDate = createdAtDate.toLocaleDateString('ar-SY', {
+                    year: 'numeric',
+                    month: 'numeric',
+                    day: 'numeric'
+                });
+                const formattedTime = createdAtDate.toLocaleTimeString('ar-SY', {
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+
+                const descriptionContent = tx.description + (tx.notes ? ` <span style="font-size:0.9em;color:#777;">(${tx.notes})</span>` : "");
+                
+                li.innerHTML = `
+                    <div class="transaction-desc">${descriptionContent}</div>
+                    <div class="transaction-date">${formattedDate} <br> ${formattedTime}</div>
+                    <div class="transaction-amount ${tx.type === "purchase" ? "transaction-type-purchase" : "transaction-type-payment"}">
+                        ${tx.type === "purchase" ? "+" : "-"} ${tx.amount.toFixed(2)} ريال
+                    </div>
+                    <div class="transaction-actions">
+                        <button title="تعديل" data-tx-id="${tx.id}" data-action="edit">✏️</button>
+                        <button title="حذف" data-tx-id="${tx.id}" data-action="delete"><span class="trash-icon">🗑️</span></button>
+                    </div>
+                `;
+
+                li.querySelector('[data-action="edit"]').onclick = (e) => {
+                    e.stopPropagation();
+                    openEditTransactionModal(client.id, tx);
+                };
+                li.querySelector('[data-action="delete"]').onclick = (e) => {
+                    e.stopPropagation();
+                    confirmModal(`هل تريد حذف هذه المعاملة؟`, async () => {
+                        await db.collection("clients").doc(client.id).collection("transactions").doc(tx.id).delete();
+                    });
+                };
+                ul.appendChild(li);
+            });
+        }
+        updateTotalDebtDisplay(client.id);
+    });
   }
 
   async function updateTotalDebtDisplay(clientId) {
@@ -1282,7 +1309,7 @@
 
     confirmBtn.onclick = () => {
       hideModal("confirm");
-      onConfirm();
+      if(onConfirm) onConfirm();
     };
     cancelBtn.onclick = () => {
       hideModal("confirm");
@@ -1315,7 +1342,6 @@
     document.getElementById("edit-tx-type").value = transaction.type;
     document.getElementById("edit-tx-notes").value = transaction.notes;
 
-    // التعديل الثالث: جعل حقل الوصف غير إلزامي عند الدفع في واجهة التعديل
     const editDescInput = document.getElementById("edit-tx-desc");
     const editTxType = document.getElementById("edit-tx-type");
     if (editTxType.value === "payment") {
@@ -1356,7 +1382,7 @@
     };
   }
   document.getElementById("cancel-edit-tx").onclick = () => {
-    hideModal("edit-transaction-modal");
+    hideModal("editTransaction");
   };
 
   document.getElementById("btn-add-transaction").onclick = () => {
@@ -1367,7 +1393,6 @@
     hideModal("addTransactionClient");
   };
 
-  // التعديل الثاني: إضافة نافذة تأكيد للمعاملة والانتقال إلى تفاصيل العميل
   document.getElementById("add-transaction-form-client").addEventListener("submit", async e => {
     e.preventDefault();
     const form = e.target;
@@ -1383,23 +1408,25 @@
     النوع: <strong>${type === 'purchase' ? 'شراء (دين)' : 'دفع'}</strong><br>`;
 
     confirmModal(confirmationMessage, async () => {
+      const createdAt = firebase.firestore.FieldValue.serverTimestamp();
       await db.collection("clients").doc(currentClientId).collection("transactions").add({
         description: desc,
         amount,
         type,
         notes,
-        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        createdAt
+      });
+      await db.collection("clients").doc(currentClientId).update({
+        lastTransactionAt: createdAt,
       });
       
       hideModal("addTransactionClient");
       messageModal("تم إضافة المعاملة بنجاح!", () => {
-          showClientDetails(); // الانتقال إلى واجهة تفاصيل العميل بعد الإضافة
       });
       form.reset();
     });
   });
 
-  // التعديل الثالث: جعل حقل الوصف غير إلزامي عند الدفع في واجهة تفاصيل العميل
   document.getElementById("transaction-type-client").addEventListener("change", (e) => {
     const descInput = document.getElementById("transaction-desc-client");
     if (e.target.value === "payment") {
@@ -1411,7 +1438,6 @@
     }
   });
 
-  // التعديل الثالث: إعادة ربط أحداث التصفية بالتاريخ
   document.getElementById("filter-from-date").addEventListener("change", () => {
     if (currentClientId) renderTransactions(clientsData.find(c => c.id === currentClientId));
   });
@@ -1439,13 +1465,12 @@
         transactionsRef = transactionsRef.where("createdAt", "<=", toDate);
       }
       
-      // الترتيب حسب وقت الإنشاء
       const snapshot = await transactionsRef.orderBy("createdAt", "desc").get();
       const transactions = snapshot.docs.map(doc => doc.data());
   
       let csvContent = "data:text/csv;charset=utf-8,";
       csvContent += "\ufeff";
-      csvContent += "التاريخ,الوقت,الوصف,النوع,المبلغ,ملاحظات\n"; // إضافة عمود الوقت
+      csvContent += "التاريخ,الوقت,الوصف,النوع,المبلغ,ملاحظات\n";
       transactions.forEach(t => {
         const createdAtDate = t.createdAt ? t.createdAt.toDate() : new Date();
         const formattedDate = createdAtDate.toLocaleDateString('ar-SY', { year: 'numeric', month: 'numeric', day: 'numeric' });
@@ -1498,12 +1523,20 @@
 
   document.getElementById("btn-to-clients").onclick = () => {
     showScreen("clients");
+    if (unsubscribeTransactions) {
+        unsubscribeTransactions();
+        unsubscribeTransactions = null;
+    }
   };
   document.getElementById("btn-back-to-home-from-clients").onclick = () => {
     showScreen("user");
   };
   document.getElementById("btn-back-to-clients-from-details").onclick = () => {
     showScreen("clients");
+    if (unsubscribeTransactions) {
+        unsubscribeTransactions();
+        unsubscribeTransactions = null;
+    }
   };
 
   document.getElementById("btn-to-about").onclick = () => {
@@ -1532,18 +1565,23 @@
     const newClientDoc = await db.collection("clients").add({
       name: name,
       userId: currentUser.uid,
-      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+      lastTransactionAt: null, // Added this field for new clients
     });
 
     const initialDebt = parseFloat(document.getElementById("new-client-initial-debt").value) || 0;
     if (initialDebt > 0) {
       const initialDesc = document.getElementById("new-client-initial-desc").value.trim() || "دين مبدئي";
+      const createdAt = firebase.firestore.FieldValue.serverTimestamp();
       await db.collection("clients").doc(newClientDoc.id).collection("transactions").add({
           description: initialDesc,
           amount: initialDebt,
           type: "purchase",
           notes: "",
-          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+          createdAt
+      });
+      await db.collection("clients").doc(newClientDoc.id).update({
+        lastTransactionAt: createdAt,
       });
     }
 
@@ -1579,7 +1617,8 @@
             const newClientDoc = await db.collection("clients").add({
                 name: clientName,
                 userId: currentUser.uid,
-                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                lastTransactionAt: null, // Added this field for new clients
             });
             await processTransaction(newClientDoc.id, form);
         });
@@ -1594,13 +1633,18 @@
     const amount = parseFloat(form.querySelector("#transaction-amount").value);
     const type = form.querySelector("#transaction-type").value;
     const notes = form.querySelector("#transaction-notes").value.trim();
+    const createdAt = firebase.firestore.FieldValue.serverTimestamp();
 
     await db.collection("clients").doc(clientId).collection("transactions").add({
         description: desc,
         amount,
         type,
         notes,
-        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        createdAt
+    });
+
+    await db.collection("clients").doc(clientId).update({
+        lastTransactionAt: createdAt,
     });
 
     messageModal("تم حفظ المعاملة بنجاح!", () => {
