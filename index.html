@@ -28,22 +28,23 @@
   header {
     background: var(--primary-color);
     color: white;
-    padding: 10px 15px; /* تم تصغير الهيدر */
+    padding: 10px 15px;
     text-align: center;
     font-weight: bold;
-    font-size: 1.2rem; /* تم تصغير حجم الخط */
+    font-size: 1.2rem;
     z-index: 100;
     display: flex;
     justify-content: space-between;
     align-items: center;
     position: sticky;
     top: 0;
+    box-shadow: var(--shadow-light); /* إضافة ظل للهيدر */
   }
   header h1 {
     margin: 0;
     flex-grow: 1;
     text-align: center;
-    font-size: 1.2rem; /* تم تصغير حجم الخط */
+    font-size: 1.2rem;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -53,8 +54,13 @@
     border: 1px solid white;
     color: white;
     padding: 5px 10px;
-    font-size: 0.9rem; /* تم تصغير حجم الزر */
+    font-size: 0.9rem;
     cursor: pointer;
+    border-radius: 6px;
+    transition: background 0.3s;
+  }
+  #logout-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
   }
   main {
     padding: 20px;
@@ -136,7 +142,7 @@
   }
   .transaction-item {
     display: grid;
-    grid-template-columns: 2fr 1fr 1fr 50px;
+    grid-template-columns: 2fr 1.5fr 1fr 50px;
     gap: 10px;
     align-items: center;
   }
@@ -147,6 +153,7 @@
     font-size: 0.85rem;
     color: #555;
     text-align: center;
+    direction: ltr; /* لتنسيق التاريخ والوقت بشكل صحيح */
   }
   .transaction-amount {
     font-weight: 700;
@@ -519,6 +526,63 @@
     text-decoration: underline;
     margin-top: 10px;
   }
+  .whatsapp-message {
+    background: #e6ffed;
+    color: #075e54;
+    padding: 15px;
+    border-radius: 8px;
+    margin-top: 20px;
+    text-align: center;
+    font-size: 0.95rem;
+    line-height: 1.5;
+  }
+  .whatsapp-message a {
+    color: #075e54;
+    font-weight: bold;
+    text-decoration: none;
+  }
+  .whatsapp-message a:hover {
+    text-decoration: underline;
+  }
+  .admin-users-list {
+    display: grid;
+    gap: 15px;
+  }
+  .admin-user-card {
+    background: var(--card-bg);
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: var(--shadow-light);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .admin-user-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-medium);
+  }
+  .admin-user-info {
+    flex-grow: 1;
+  }
+  .admin-user-info h4 {
+    margin: 0 0 5px 0;
+    font-size: 1.1rem;
+  }
+  .admin-user-info span {
+    font-size: 0.9rem;
+    color: #555;
+  }
+  .admin-user-actions {
+    display: flex;
+    gap: 5px;
+  }
+  .admin-user-actions button {
+    font-size: 0.9rem;
+    padding: 8px 12px;
+    margin: 0;
+  }
   @media (max-width: 600px) {
     .filter-dates {
       flex-direction: row;
@@ -567,6 +631,10 @@
         <button type="submit" class="submit-btn">تسجيل الدخول</button>
         <button type="button" id="switch-to-register">ليس لديك حساب؟ قم بالتسجيل</button>
       </form>
+      <div class="whatsapp-message">
+        <p>لتفعيل حسابك بعد التسجيل، يرجى التواصل عبر واتساب على الرقم:</p>
+        <p><a href="https://wa.me/967730102760" target="_blank">730102760</a></p>
+      </div>
     </div>
   </section>
 
@@ -588,7 +656,7 @@
       <button id="btn-show-pending-users">عرض المستخدمين قيد المراجعة</button>
       <button id="btn-show-all-users">عرض جميع المستخدمين</button>
     </div>
-    <ul id="users-list-container"></ul>
+    <ul id="users-list-container" class="admin-users-list"></ul>
   </section>
 
   <section id="user-screen" class="screen">
@@ -843,32 +911,42 @@
   let currentUser = null;
   let clientsData = [];
   let userRole = null;
-  
+
+  // التعديل الأول: دالة showScreen تم تحديثها للتحكم في عرض الهيدر
   function showScreen(screenName) {
     document.querySelector('main').classList.remove('home-active', 'clients-active', 'client-details-active');
     Object.values(screens).forEach(screen => screen.classList.remove("active"));
     screens[screenName].classList.add("active");
+    // تحديث الهيدر بناءً على الواجهة الحالية
+    const header = document.getElementById("app-header");
+    if (screenName === 'user' || screenName === 'admin') {
+      header.classList.remove("hidden");
+    } else {
+      header.classList.add("hidden");
+    }
   }
+
+  function updateHeader(loggedIn, screenName) {
+      const header = document.getElementById("app-header");
+      if (loggedIn && (screenName === 'user' || screenName === 'admin')) {
+          header.classList.remove("hidden");
+      } else {
+          header.classList.add("hidden");
+      }
+  }
+
   function showModal(modalName) {
       modals[modalName].classList.add("active");
   }
   function hideModal(modalName) {
       modals[modalName].classList.remove("active");
   }
-  function updateHeader(loggedIn) {
-    const header = document.getElementById("app-header");
-    if (loggedIn) {
-        header.classList.remove("hidden");
-    } else {
-        header.classList.add("hidden");
-    }
-  }
+  
 
   // Auth Logic
   auth.onAuthStateChanged(async (user) => {
     if (user) {
         currentUser = user;
-        updateHeader(true);
         const userDoc = await db.collection("users").doc(user.uid).get();
         if (userDoc.exists) {
             const userData = userDoc.data();
@@ -943,6 +1021,7 @@
   
   // Admin Panel Logic
   function showAdminPanel() {
+    // تم إزالة استدعاء updateHeader هنا لأن showScreen تقوم بذلك الآن
     showScreen("admin");
     renderUsersList();
   }
@@ -964,11 +1043,15 @@
     
     snapshot.forEach(doc => {
         const userData = doc.data();
+        // التعديل الخامس: تحسين واجهة المسؤول
         const li = document.createElement("li");
+        li.classList.add("admin-user-card");
         li.innerHTML = `
-            <span>${userData.email}</span>
-            <div>
+            <div class="admin-user-info">
+                <h4>${userData.email}</h4>
                 <span class="approval-status-${userData.approved ? 'approved' : 'pending'}">${userData.approved ? 'موافق عليه' : 'قيد المراجعة'}</span>
+            </div>
+            <div class="admin-user-actions">
                 ${!userData.approved ? `<button class="approve-btn" data-uid="${doc.id}">تفعيل</button>` : `<button class="restrict-btn" data-uid="${doc.id}">تقييد</button>`}
             </div>
         `;
@@ -979,7 +1062,7 @@
         btn.addEventListener("click", async (e) => {
             const uid = e.target.dataset.uid;
             await db.collection("users").doc(uid).update({ approved: true });
-            renderUsersList();
+            renderUsersList(document.getElementById("btn-show-pending-users").classList.contains('active'));
             messageModal("تم تفعيل المستخدم بنجاح.");
         });
     });
@@ -988,20 +1071,41 @@
         btn.addEventListener("click", async (e) => {
             const uid = e.target.dataset.uid;
             await db.collection("users").doc(uid).update({ approved: false });
-            renderUsersList();
+            renderUsersList(document.getElementById("btn-show-pending-users").classList.contains('active'));
             messageModal("تم تقييد المستخدم بنجاح.");
         });
     });
   }
 
-  document.getElementById("btn-show-pending-users").addEventListener("click", () => renderUsersList(true));
-  document.getElementById("btn-show-all-users").addEventListener("click", () => renderUsersList(false));
+  document.getElementById("btn-show-pending-users").addEventListener("click", () => {
+    document.getElementById("btn-show-pending-users").classList.add('active');
+    document.getElementById("btn-show-all-users").classList.remove('active');
+    renderUsersList(true);
+  });
+  document.getElementById("btn-show-all-users").addEventListener("click", () => {
+    document.getElementById("btn-show-pending-users").classList.remove('active');
+    document.getElementById("btn-show-all-users").classList.add('active');
+    renderUsersList(false);
+  });
   
   // User Panel Logic
   function showUserPanel() {
+    // تم إزالة استدعاء updateHeader هنا لأن showScreen تقوم بذلك الآن
     showScreen("user");
     updateClientSuggestions();
     fetchClients();
+    
+    // التعديل الثالث: جعل حقل الوصف غير إلزامي عند الدفع في الواجهة الرئيسية
+    document.getElementById("transaction-type").addEventListener("change", (e) => {
+      const descInput = document.getElementById("transaction-desc");
+      if (e.target.value === "payment") {
+        descInput.removeAttribute("required");
+        descInput.parentNode.querySelector('label').classList.remove('required');
+      } else {
+        descInput.setAttribute("required", true);
+        descInput.parentNode.querySelector('label').classList.add('required');
+      }
+    });
   }
   
   async function fetchClients() {
@@ -1083,19 +1187,32 @@
     const ul = document.getElementById("transactions-list");
     ul.innerHTML = "";
 
-    const fromDate = document.getElementById("filter-from-date").value;
-    const toDate = document.getElementById("filter-to-date").value;
-
-    let transactionsRef = db.collection("clients").doc(client.id).collection("transactions");
-    if(fromDate) {
-        transactionsRef = transactionsRef.where("date", ">=", fromDate);
-    }
-    if(toDate) {
-        transactionsRef = transactionsRef.where("date", "<=", toDate);
-    }
-    const snapshot = await transactionsRef.orderBy("date", "desc").get();
+    const fromDateStr = document.getElementById("filter-from-date").value;
+    const toDateStr = document.getElementById("filter-to-date").value;
     
-    const transactions = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    let transactionsRef = db.collection("clients").doc(client.id).collection("transactions");
+
+    // التعديل الثالث: إصلاح التصفية حسب التاريخ باستخدام حقل createdAt
+    if(fromDateStr) {
+      const fromDate = new Date(fromDateStr);
+      transactionsRef = transactionsRef.where("createdAt", ">=", fromDate);
+    }
+    if(toDateStr) {
+      const toDate = new Date(toDateStr);
+      toDate.setHours(23, 59, 59, 999); // لضمان تضمين المعاملات في آخر اليوم المحدد
+      transactionsRef = transactionsRef.where("createdAt", "<=", toDate);
+    }
+    
+    const snapshot = await transactionsRef.orderBy("createdAt", "desc").get();
+    
+    const transactions = snapshot.docs.map(doc => {
+      const data = doc.data();
+      return { 
+        id: doc.id,
+        ...data,
+        createdAt: data.createdAt ? data.createdAt.toDate() : new Date(data.date)
+      };
+    });
 
     if (transactions.length === 0) {
       ul.innerHTML = "<p style='text-align: center; color: #888; padding-top: 20px;'>لا توجد معاملات في هذه الفترة.</p>";
@@ -1104,11 +1221,22 @@
         const li = document.createElement("li");
         li.classList.add("transaction-item");
 
+        const createdAtDate = tx.createdAt;
+        const formattedDate = createdAtDate.toLocaleDateString('ar-SY', {
+          year: 'numeric',
+          month: 'numeric',
+          day: 'numeric'
+        });
+        const formattedTime = createdAtDate.toLocaleTimeString('ar-SY', {
+          hour: '2-digit',
+          minute: '2-digit'
+        });
+
         const descriptionContent = tx.description + (tx.notes ? ` <span style="font-size:0.9em;color:#777;">(${tx.notes})</span>` : "");
         
         li.innerHTML = `
           <div class="transaction-desc">${descriptionContent}</div>
-          <div class="transaction-date">${tx.date}</div>
+          <div class="transaction-date">${formattedDate} <br> ${formattedTime}</div>
           <div class="transaction-amount ${tx.type === "purchase" ? "transaction-type-purchase" : "transaction-type-payment"}">
             ${tx.type === "purchase" ? "+" : "-"} ${tx.amount.toFixed(2)} ريال
           </div>
@@ -1186,7 +1314,27 @@
     document.getElementById("edit-tx-amount").value = transaction.amount;
     document.getElementById("edit-tx-type").value = transaction.type;
     document.getElementById("edit-tx-notes").value = transaction.notes;
-    
+
+    // التعديل الثالث: جعل حقل الوصف غير إلزامي عند الدفع في واجهة التعديل
+    const editDescInput = document.getElementById("edit-tx-desc");
+    const editTxType = document.getElementById("edit-tx-type");
+    if (editTxType.value === "payment") {
+        editDescInput.removeAttribute("required");
+        editDescInput.parentNode.querySelector('label').classList.remove('required');
+    } else {
+        editDescInput.setAttribute("required", true);
+        editDescInput.parentNode.querySelector('label').classList.add('required');
+    }
+    editTxType.addEventListener("change", (e) => {
+        if (e.target.value === "payment") {
+            editDescInput.removeAttribute("required");
+            editDescInput.parentNode.querySelector('label').classList.remove('required');
+        } else {
+            editDescInput.setAttribute("required", true);
+            editDescInput.parentNode.querySelector('label').classList.add('required');
+        }
+    });
+
     showModal("editTransaction");
 
     form.onsubmit = async (e) => {
@@ -1208,7 +1356,7 @@
     };
   }
   document.getElementById("cancel-edit-tx").onclick = () => {
-    hideModal("editTransaction");
+    hideModal("edit-transaction-modal");
   };
 
   document.getElementById("btn-add-transaction").onclick = () => {
@@ -1219,6 +1367,7 @@
     hideModal("addTransactionClient");
   };
 
+  // التعديل الثاني: إضافة نافذة تأكيد للمعاملة والانتقال إلى تفاصيل العميل
   document.getElementById("add-transaction-form-client").addEventListener("submit", async e => {
     e.preventDefault();
     const form = e.target;
@@ -1227,20 +1376,42 @@
     const amount = parseFloat(form.querySelector("#transaction-amount-client").value);
     const type = form.querySelector("#transaction-type-client").value;
     const notes = form.querySelector("#transaction-notes-client").value.trim();
-    
-    await db.collection("clients").doc(currentClientId).collection("transactions").add({
-      description: desc,
-      amount,
-      type,
-      notes,
-      date: new Date().toISOString().slice(0, 10),
-      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+
+    const confirmationMessage = `هل أنت متأكد من إضافة المعاملة التالية؟<br><br>
+    الوصف: <strong>${desc || 'لا يوجد'}</strong><br>
+    المبلغ: <strong>${amount}</strong><br>
+    النوع: <strong>${type === 'purchase' ? 'شراء (دين)' : 'دفع'}</strong><br>`;
+
+    confirmModal(confirmationMessage, async () => {
+      await db.collection("clients").doc(currentClientId).collection("transactions").add({
+        description: desc,
+        amount,
+        type,
+        notes,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+      
+      hideModal("addTransactionClient");
+      messageModal("تم إضافة المعاملة بنجاح!", () => {
+          showClientDetails(); // الانتقال إلى واجهة تفاصيل العميل بعد الإضافة
+      });
+      form.reset();
     });
-    
-    hideModal("addTransactionClient");
-    form.reset();
   });
 
+  // التعديل الثالث: جعل حقل الوصف غير إلزامي عند الدفع في واجهة تفاصيل العميل
+  document.getElementById("transaction-type-client").addEventListener("change", (e) => {
+    const descInput = document.getElementById("transaction-desc-client");
+    if (e.target.value === "payment") {
+      descInput.removeAttribute("required");
+      descInput.parentNode.querySelector('label').classList.remove('required');
+    } else {
+      descInput.setAttribute("required", true);
+      descInput.parentNode.querySelector('label').classList.add('required');
+    }
+  });
+
+  // التعديل الثالث: إعادة ربط أحداث التصفية بالتاريخ
   document.getElementById("filter-from-date").addEventListener("change", () => {
     if (currentClientId) renderTransactions(clientsData.find(c => c.id === currentClientId));
   });
@@ -1252,22 +1423,37 @@
     confirmModal(`هل أنت متأكد من تصدير البيانات؟`, async () => {
       const client = clientsData.find(c => c.id === currentClientId);
       if (!client) return;
-      const fromDate = document.getElementById("filter-from-date").value;
-      const toDate = document.getElementById("filter-to-date").value;
+      
+      const fromDateStr = document.getElementById("filter-from-date").value;
+      const toDateStr = document.getElementById("filter-to-date").value;
   
       let transactionsRef = db.collection("clients").doc(client.id).collection("transactions");
-      if(fromDate) transactionsRef = transactionsRef.where("date", ">=", fromDate);
-      if(toDate) transactionsRef = transactionsRef.where("date", "<=", toDate);
-      const snapshot = await transactionsRef.orderBy("date", "desc").get();
+      
+      if(fromDateStr) {
+        const fromDate = new Date(fromDateStr);
+        transactionsRef = transactionsRef.where("createdAt", ">=", fromDate);
+      }
+      if(toDateStr) {
+        const toDate = new Date(toDateStr);
+        toDate.setHours(23, 59, 59, 999);
+        transactionsRef = transactionsRef.where("createdAt", "<=", toDate);
+      }
+      
+      // الترتيب حسب وقت الإنشاء
+      const snapshot = await transactionsRef.orderBy("createdAt", "desc").get();
       const transactions = snapshot.docs.map(doc => doc.data());
   
       let csvContent = "data:text/csv;charset=utf-8,";
       csvContent += "\ufeff";
-      csvContent += "التاريخ,الوصف,النوع,المبلغ,ملاحظات\n";
+      csvContent += "التاريخ,الوقت,الوصف,النوع,المبلغ,ملاحظات\n"; // إضافة عمود الوقت
       transactions.forEach(t => {
+        const createdAtDate = t.createdAt ? t.createdAt.toDate() : new Date();
+        const formattedDate = createdAtDate.toLocaleDateString('ar-SY', { year: 'numeric', month: 'numeric', day: 'numeric' });
+        const formattedTime = createdAtDate.toLocaleTimeString('ar-SY', { hour: '2-digit', minute: '2-digit' });
         const row = [
-          t.date,
-          `"${t.description.replace(/"/g, '""')}"`,
+          formattedDate,
+          formattedTime,
+          `"${t.description?.replace(/"/g, '""') || ""}"`,
           t.type === "purchase" ? "شراء (دين)" : "دفع",
           t.amount.toFixed(2),
           `"${t.notes?.replace(/"/g, '""') || ""}"`
@@ -1357,7 +1543,6 @@
           amount: initialDebt,
           type: "purchase",
           notes: "",
-          date: new Date().toISOString().slice(0, 10),
           createdAt: firebase.firestore.FieldValue.serverTimestamp()
       });
     }
@@ -1383,7 +1568,7 @@
 
     const confirmationMessage = `هل أنت متأكد من إرسال المعاملة التالية؟<br><br>
     العميل: <strong>${clientName}</strong><br>
-    الوصف: <strong>${desc}</strong><br>
+    الوصف: <strong>${desc || 'لا يوجد'}</strong><br>
     المبلغ: <strong>${amount}</strong><br>
     النوع: <strong>${type === 'purchase' ? 'شراء (دين)' : 'دفع'}</strong><br>`;
 
@@ -1415,7 +1600,6 @@
         amount,
         type,
         notes,
-        date: new Date().toISOString().slice(0, 10),
         createdAt: firebase.firestore.FieldValue.serverTimestamp()
     });
 
