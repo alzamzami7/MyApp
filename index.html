@@ -1414,14 +1414,31 @@
     document.getElementById("btn-delete-user").onclick = () => {
       hideModal("userDetails");
       confirmModal("هل أنت متأكد من حذف هذا المستخدم وجميع بياناته؟", async () => {
-        const clientsSnapshot = await db.collection("clients").where("userId", "==", uid).get();
+        // ابدأ عملية batch لحذف البيانات المرتبطة
         const batch = db.batch();
-        clientsSnapshot.forEach(doc => {
-            batch.delete(doc.ref);
+        
+        // ابحث عن جميع العملاء التابعين لهذا المستخدم
+        const clientsSnapshot = await db.collection("clients").where("userId", "==", uid).get();
+        
+        // لكل عميل، احذف جميع معاملاته
+        const clientDeletePromises = clientsSnapshot.docs.map(async clientDoc => {
+          const transactionsSnapshot = await db.collection("clients").doc(clientDoc.id).collection("transactions").get();
+          transactionsSnapshot.docs.forEach(transactionDoc => {
+            batch.delete(transactionDoc.ref);
+          });
+          // ثم احذف وثيقة العميل نفسه
+          batch.delete(clientDoc.ref);
         });
+        
+        // انتظر حتى يتم تجميع جميع عمليات حذف المعاملات والعملاء
+        await Promise.all(clientDeletePromises);
+        
+        // احذف وثيقة المستخدم
+        batch.delete(db.collection("users").doc(uid));
+
+        // نفّذ جميع العمليات المجمّعة
         await batch.commit();
 
-        await db.collection("users").doc(uid).delete();
         messageModal("تم حذف المستخدم وجميع بياناته بنجاح.", () => {
             fetchUsersAndRender();
         });
@@ -1526,8 +1543,16 @@
       li.onclick = async (e) => {
         if(e.target.closest('button')?.dataset.action === "delete") {
           e.stopPropagation();
-          confirmModal(`هل أنت متأكد من حذف العميل "${client.name}"؟`, async () => {
-            await db.collection("clients").doc(client.id).delete();
+          confirmModal(`هل أنت متأكد من حذف العميل "${client.name}"؟ سيؤدي هذا إلى حذف جميع معاملاته أيضاً.`, async () => {
+            // ابدأ عملية batch لحذف المعاملات ثم العميل نفسه
+            const batch = db.batch();
+            const transactionsSnapshot = await db.collection("clients").doc(client.id).collection("transactions").get();
+            transactionsSnapshot.docs.forEach(doc => {
+              batch.delete(doc.ref);
+            });
+            batch.delete(db.collection("clients").doc(client.id));
+            await batch.commit();
+            messageModal("تم حذف العميل ومعاملاته بنجاح.");
           });
         } else {
           currentClientId = client.id;
@@ -1733,7 +1758,7 @@
     };
   }
   document.getElementById("cancel-edit-tx").onclick = () => {
-    hideModal("edit-transaction-modal");
+    hideModal("editTransaction");
   };
 
   document.getElementById("btn-add-transaction").onclick = () => {
